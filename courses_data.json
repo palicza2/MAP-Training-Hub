@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "title": "Systemic Macro-Financial Risk Analysis",
+    "institution": "IMF",
+    "date": "2025. October 6-17.",
+    "location": "Washington, D.C., USA",
+    "format": "On-site",
+    "description": "A comprehensive overview of the theories, tools, and techniques necessary for thorough financial stability analysis.",
+    "topics": ["Financial Stability", "Stress Testing"],
+    "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MFRA"
+  },
+  {
+    "id": 2,
+    "title": "Macroprudential Policy: Implementing the Financial Stability Mandate",
+    "institution": "BIS",
+    "date": "2025. November 3-7.",
+    "location": "Basel, Switzerland",
+    "format": "On-site",
+    "description": "Practical training on the effective use of macroprudential instruments and related governance issues.",
+    "topics": ["Macroprudential Policy"],
+    "url": "https://www.bis.org/fsi/fsi_events.htm"
+  },
+  {
+    "id": 3,
+    "title": "Climate Risks in the Financial System (Online)",
+    "institution": "ECB",
+    "date": "2025. September 22-26.",
+    "location": "Online",
+    "format": "Online",
+    "description": "An introduction to measuring and managing the impact of climate change on financial stability.",
+    "topics": ["Financial Stability", "Climate Risks"],
+    "url": "#"
+  },
+  {
+    "id": 4,
+    "title": "Summer School on Financial Regulation",
+    "institution": "LSE",
+    "date": "2026. July 13-24.",
+    "location": "London, UK",
+    "format": "On-site",
+    "description": "An intensive course covering the latest developments in financial regulation and supervision.",
+    "topics": ["Financial Stability", "Macroprudential Policy"],
+    "url": "#"
+  }
+]
