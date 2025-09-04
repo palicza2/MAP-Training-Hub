@@ -1,29 +1,5 @@
 [
     {
-        "id": 3,
-        "title": "Climate Risks in the Financial System (Online)",
-        "institution": "ECB",
-        "date": "Sep 22-26, 2025",
-        "location": "Online",
-        "format": "Online",
-        "description": "Introduction to measuring and managing the impact of climate change on financial stability.",
-        "topics": ["Financial Stability", "Climate Risks"],
-        "url": "https://www.ecb.europa.eu/home/html/index.en.html",
-        "tuition_fee": "Free for eligible participants"
-    },
-    {
-        "id": 14,
-        "title": "Annual training on Banking Supervision",
-        "institution": "Florence School of Banking",
-        "date": "Oct 6-10, 2025",
-        "location": "Florence, Italy",
-        "format": "On-site",
-        "description": "Provides a comprehensive overview of the key concepts and latest developments in banking supervision, with a focus on the European framework.",
-        "topics": ["Banking Supervision", "Financial Stability"],
-        "url": "https://fsb.eui.eu/training/",
-        "tuition_fee": "€2,500"
-    },
-    {
         "id": 9,
         "title": "Financial Soundness Indicators (FSI-C)",
         "institution": "IMF",
@@ -34,42 +10,6 @@
         "topics": ["Financial Stability", "Macroprudential Policy"],
         "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/FSI-C",
         "tuition_fee": "Free for member country officials"
-    },
-    {
-        "id": 5,
-        "title": "Advanced Stress Testing for Financial Institutions",
-        "institution": "BoE",
-        "date": "Nov 10-14, 2025",
-        "location": "London, UK",
-        "format": "On-site",
-        "description": "Deep dive into advanced methodologies for solvency and liquidity stress testing for banks and insurers.",
-        "topics": ["Stress Testing", "Financial Stability"],
-        "url": "https://www.bankofengland.co.uk/ccbs",
-        "tuition_fee": "Free for eligible participants"
-    },
-    {
-        "id": 2,
-        "title": "High-level meeting on global banking standards",
-        "institution": "BIS",
-        "date": "Nov 18-19, 2025",
-        "location": "Basel, Switzerland",
-        "format": "On-site",
-        "description": "A meeting for senior officials on the implementation and effects of global banking standards and supervisory priorities.",
-        "topics": ["Macroprudential Policy", "Financial Stability"],
-        "url": "https://www.bis.org/fsi/fsi_events.htm",
-        "tuition_fee": "By invitation only"
-    },
-    {
-        "id": 13,
-        "title": "On-site inspection – a practical training course",
-        "institution": "Bundesbank",
-        "date": "Nov 24-28, 2025",
-        "location": "Frankfurt, Germany",
-        "format": "On-site",
-        "description": "Provides participants with practical insights into the planning, execution and evaluation of on-site inspections at banks.",
-        "topics": ["Banking Supervision", "Financial Stability"],
-        "url": "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue",
-        "tuition_fee": "Free for central bank employees"
     },
     {
         "id": 11,
@@ -84,18 +24,6 @@
         "tuition_fee": "Free for member country officials"
     },
     {
-        "id": 6,
-        "title": "FinTech and the Future of Finance (Online)",
-        "institution": "LSE",
-        "date": "Jan 12-23, 2026",
-        "location": "Online",
-        "format": "Online",
-        "description": "Examines the impact of digitalization, crypto-assets, and AI on financial markets and stability.",
-        "topics": ["Digitalization & FinTech", "Financial Stability"],
-        "url": "https://www.lse.ac.uk/study-at-lse/short-courses/fintech-and-the-future-of-finance",
-        "tuition_fee": "£2,400"
-    },
-    {
         "id": 1,
         "title": "Systemic Macro-Financial Risk Analysis (MFRA)",
         "institution": "IMF",
@@ -106,102 +34,6 @@
         "topics": ["Financial Stability", "Stress Testing"],
         "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MFRA",
         "tuition_fee": "Free for member country officials"
-    },
-    {
-        "id": 4,
-        "title": "Financial Stability Policies (FSP)",
-        "institution": "JVI",
-        "date": "Feb 24 - Mar 7, 2026",
-        "location": "Vienna, Austria",
-        "format": "On-site",
-        "description": "Presented by the IMF, this course provides a comprehensive overview of policies to safeguard financial stability, covering both micro- and macroprudential perspectives.",
-        "topics": ["Financial Stability", "Macroprudential Policy"],
-        "url": "https://www.jvi.org/training/course-schedules/2026/financial-stability-policies.html",
-        "tuition_fee": "Free for eligible participants"
-    },
-    {
-        "id": 10,
-        "title": "Applied Economic Forecasting (AEF)",
-        "institution": "JVI",
-        "date": "Mar 10-21, 2026",
-        "location": "Vienna, Austria",
-        "format": "On-site",
-        "description": "A course by the Austrian National Bank on practical forecasting of key macroeconomic variables relevant for policy making.",
-        "topics": ["Econometrics", "Financial Stability"],
-        "url": "https://www.jvi.org/training/course-schedules/2026/applied-economic-forecasting.html",
-        "tuition_fee": "Free for eligible participants"
-    },
-    {
-        "id": 15,
-        "title": "Digital Finance and Regulation (Online)",
-        "institution": "Florence School of Banking",
-        "date": "Mar 23-27, 2026",
-        "location": "Online",
-        "format": "Online",
-        "description": "This online course explores the main regulatory and supervisory challenges posed by the digitalization of finance.",
-        "topics": ["Digitalization & FinTech", "Banking Supervision"],
-        "url": "https://fsb.eui.eu/training/",
-        "tuition_fee": "€1,500"
-    },
-    {
-        "id": 8,
-        "title": "Climate Stress Testing Seminar",
-        "institution": "BdF",
-        "date": "Apr 7-9, 2026",
-        "location": "Paris, France",
-        "format": "On-site",
-        "description": "A high-level seminar on the latest methodologies for climate scenario analysis and its impact on the banking sector.",
-        "topics": ["Climate Risks", "Stress Testing"],
-        "url": "https://www.banque-france.fr/en/browse-by/training-seminars",
-        "tuition_fee": "By invitation only"
-    },
-    {
-        "id": 16,
-        "title": "International Banking Supervision and Regulation Seminar",
-        "institution": "FED",
-        "date": "May 4-8, 2026",
-        "location": "Washington, D.C.",
-        "format": "On-site",
-        "description": "Seminar for senior central bankers and supervisors on current developments in international banking supervision and regulation, including Basel III.",
-        "topics": ["Banking Supervision", "Macroprudential Policy"],
-        "url": "https://www.federalreserve.gov/supervisionreg/international-activities.htm",
-        "tuition_fee": "Free for central bank and supervisory authorities"
-    },
-    {
-        "id": 12,
-        "title": "Monetary Policy (MP)",
-        "institution": "JVI",
-        "date": "Jun 2-13, 2026",
-        "location": "Vienna, Austria",
-        "format": "On-site",
-        "description": "This course, presented by the Swiss National Bank, provides a comprehensive introduction to the theory and practice of modern monetary policy.",
-        "topics": ["Monetary Policy", "Financial Stability"],
-        "url": "https://www.jvi.org/training/course-schedules/2026/monetary-policy.html",
-        "tuition_fee": "Free for eligible participants"
-    },
-    {
-        "id": 7,
-        "title": "Financial stability – systemic risk, macroprudential policy and stability analysis",
-        "institution": "Bundesbank",
-        "date": "Jun 23-27, 2026",
-        "location": "Frankfurt, Germany",
-        "format": "On-site",
-        "description": "Participants will gain a thorough understanding of financial stability, systemic risk and macroprudential policy, with both theoretical and practical components.",
-        "topics": ["Macroprudential Policy", "Financial Stability"],
-        "url": "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue",
-        "tuition_fee": "Free for central bank employees"
-    },
-    {
-        "id": 17,
-        "title": "Financial Stability Seminar",
-        "institution": "FED",
-        "date": "Sep 14-18, 2026",
-        "location": "Washington, D.C.",
-        "format": "On-site",
-        "description": "Covers the Fed's framework for monitoring and addressing risks to financial stability, including tools for macroprudential supervision.",
-        "topics": ["Financial Stability", "Macroprudential Policy"],
-        "url": "https://www.federalreserve.gov/supervisionreg/international-activities.htm",
-        "tuition_fee": "Free for central bank and supervisory authorities"
     }
 ]
 
