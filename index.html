@@ -2,22 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAP Training Hub - Financial Stability Courses</title>
-
-    <!-- Open Graph / Facebook Meta Tags -->
-    <meta property="og:type" content="website">
+    
+    <!-- Meta Tags for Social Sharing -->
+    <meta property="og:title" content="MAP Training Hub">
+    <meta property="og:description" content="A central database for monitoring macroprudential and financial stability trainings from top institutions worldwide.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/palicza2/MAP-Training-Hub/main/social_preview.png">
     <meta property="og:url" content="https://palicza2.github.io/MAP-Training-Hub/">
-    <meta property="og:title" content="MAP Training Hub - Financial Stability Courses">
-    <meta property="og:description" content="A central, searchable database of macroprudential and financial stability training courses from central banks and international institutions.">
-    <meta property="og:image" content="https://placehold.co/1200x630/003366/FFFFFF?text=MAP+Training+Hub">
-
-    <!-- Twitter Meta Tags -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://palicza2.github.io/MAP-Training-Hub/">
-    <meta property="twitter:title" content="MAP Training Hub - Financial Stability Courses">
-    <meta property="twitter:description" content="A central, searchable database of macroprudential and financial stability training courses from central banks and international institutions.">
-    <meta property="twitter:image" content="https://placehold.co/1200x630/003366/FFFFFF?text=MAP+Training+Hub">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,33 +25,37 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        /* Sticky sidebar for larger screens */
+        @media (min-width: 768px) {
+            #filter-sidebar {
+                position: sticky;
+                top: 1.5rem; /* Corresponds to sticky top-6 */
+                align-self: flex-start; /* Prevents stretching */
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="container mx-auto p-4 md:p-8">
+    <div class="container mx-auto p-4 md:p-6">
         
         <header class="text-center mb-8 md:mb-12">
             <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-2">MAP Training Hub</h1>
             <p class="text-base md:text-lg text-gray-600">Monitoring Macroprudential & Financial Stability Trainings</p>
         </header>
 
-        <div class="lg:flex lg:gap-8">
-
-            <!-- Left Sidebar for Filters -->
-            <aside class="lg:w-1/4 mb-8 lg:mb-0">
-                <div class="lg:sticky lg:top-4">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
-                        <div id="filter-content" class="grid grid-cols-1 gap-4">
-                            <!-- Filters will be populated here by JS -->
-                        </div>
-                    </div>
+        <div id="app-layout" class="md:grid md:grid-cols-4 md:gap-8">
+            
+            <!-- Filter Sidebar (Left column on md screens and up) -->
+            <aside id="filter-sidebar" class="md:col-span-1 bg-white p-6 rounded-xl shadow-md mb-8 md:mb-0 h-fit">
+                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
+                 <div id="filter-content" class="space-y-4">
+                    <!-- Filters will be populated here by JS -->
                 </div>
             </aside>
 
-            <!-- Right Main Content -->
-            <div class="lg:w-3/4">
+            <!-- Main Content (Right column on md screens and up) -->
+            <div class="md:col-span-3">
                 <div id="loading-spinner" class="text-center py-16">
                     <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -67,7 +64,7 @@
                     <p class="mt-4 text-gray-600">Loading courses...</p>
                 </div>
 
-                <main id="courses-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <main id="courses-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     <!-- Course cards will be loaded here by JavaScript -->
                 </main>
                 
@@ -75,8 +72,8 @@
                     <p class="text-xl text-gray-500">No courses match the current filter criteria.</p>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 
     <script>
@@ -175,9 +172,19 @@
                             ${topicsHtml}
                         </div>
                         <div class="border-t border-gray-200 pt-4">
-                             <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-                                <span><strong>Date:</strong> ${course.date}</span>
-                                <span><strong>Location:</strong> ${course.location}</span>
+                             <div class="space-y-2 text-sm text-gray-600 mb-4">
+                                <div class="flex justify-between">
+                                    <strong class="text-gray-500">Date:</strong>
+                                    <span class="text-right">${course.date}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <strong class="text-gray-500">Location:</strong>
+                                    <span class="text-right">${course.location}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <strong class="text-gray-500">Tuition Fee:</strong>
+                                    <span class="font-semibold text-right">${course.tuition_fee}</span>
+                                </div>
                             </div>
                             <a href="${course.url}" target="_blank" class="block w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
                                 Go to Course
