@@ -116,15 +116,15 @@
         let allCourses = [];
         
         const institutionsData = [
-            { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" },
-            { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" },
-            { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" },
-            { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" },
-            { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/" },
-            { name: "Federal Reserve System", url: "https://www.federalreserve.gov/conferences.htm" },
-            { name: "London School of Economics (LSE)", url: "https://www.lse.ac.uk/study-at-lse/short-courses" },
-            { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" },
-            { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/home/html/index.en.html" },
+            { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training", logo: "https://upload.wikimedia.org/wikipedia/commons/8/86/International_Monetary_Fund_logo.svg" },
+            { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm", logo: "https://upload.wikimedia.org/wikipedia/en/e/e1/Bank_for_International_Settlements_logo.svg" },
+            { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html", logo: null },
+            { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue", logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Deutsche_Bundesbank_logo.svg" },
+            { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/89/European_University_Institute_logo.svg/200px-European_University_Institute_logo.svg.png" },
+            { name: "Federal Reserve System", url: "https://www.federalreserve.gov/conferences.htm", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Seal_of_the_United_States_Federal_Reserve_System.svg" },
+            { name: "London School of Economics (LSE)", url: "https://upload.wikimedia.org/wikipedia/commons/5/53/LSE_Logo.svg", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/LSE_crest.svg/150px-LSE_crest.svg.png" },
+            { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_de_la_Banque_de_France.svg" },
+            { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/home/html/index.en.html", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/European_Central_Bank_logo.svg/200px-European_Central_Bank_logo.svg.png" },
         ];
 
 
@@ -174,12 +174,20 @@
 
         // --- INSTITUTIONS PAGE LOGIC ---
         function displayInstitutions() {
-            const institutionCardsHtml = institutionsData.map(inst => `
-                <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 card-hover">
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">${inst.name}</h3>
-                    <p class="text-sm text-blue-600 hover:underline">Go to training page →</p>
+            const institutionCardsHtml = institutionsData.map(inst => {
+                const logoHtml = inst.logo 
+                    ? `<img src="${inst.logo}" alt="${inst.name} Logo" class="h-12 mr-4 object-contain">`
+                    : `<div class="w-12 h-12 flex-shrink-0 mr-4 bg-gray-200 rounded-md flex items-center justify-center text-lg font-bold text-gray-500">${inst.name.split(' ').map(w => w[0]).slice(0,3).join('')}</div>`;
+
+                return `
+                <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="flex items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 card-hover">
+                    ${logoHtml}
+                    <div>
+                        <h3 class="text-md font-bold text-gray-900 leading-tight">${inst.name}</h3>
+                        <p class="text-sm text-blue-600 hover:underline mt-1">Go to training page →</p>
+                    </div>
                 </a>
-            `).join('');
+            `}).join('');
             
             contentInstitutions.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${institutionCardsHtml}</div>`;
         }
