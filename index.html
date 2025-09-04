@@ -26,12 +26,6 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        /* Sticky sidebar for filters */
-        #filter-column {
-            position: sticky;
-            top: 2rem;
-            align-self: flex-start;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -61,7 +55,7 @@
         <div id="content-courses">
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Left Sidebar for Filters -->
-                <aside id="filter-column" class="lg:w-1/4 xl:w-1/5">
+                <aside id="filter-column" class="lg:w-1/4 xl:w-1/5 lg:sticky lg:top-8 lg:self-start">
                     <div class="bg-white p-6 rounded-xl shadow-md">
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
                         <div id="filter-content" class="grid grid-cols-1 gap-4">
@@ -296,5 +290,4 @@
     </script>
 </body>
 </html>
-
 
