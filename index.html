@@ -6,8 +6,8 @@
     <title>MAP Training Hub - Financial Stability Courses</title>
     
     <!-- Meta Tags for Social Sharing -->
-    <meta property="og:title" content="MAP Training Hub">
-    <meta property="og:description" content="A central database for monitoring macroprudential and financial stability trainings from top institutions worldwide.">
+    <meta property="og:title" content="MAP Training Hub - Financial Stability Courses">
+    <meta property="og:description" content="A curated, searchable database of macroprudential and financial stability trainings from central banks and international institutions.">
     <meta property="og:image" content="https://raw.githubusercontent.com/palicza2/MAP-Training-Hub/main/social_preview.png">
     <meta property="og:url" content="https://palicza2.github.io/MAP-Training-Hub/">
     <meta name="twitter:card" content="summary_large_image">
@@ -25,73 +25,114 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        /* Sticky sidebar for larger screens */
-        @media (min-width: 768px) {
-            #filter-sidebar {
-                position: sticky;
-                top: 1.5rem; /* Corresponds to sticky top-6 */
-                align-self: flex-start; /* Prevents stretching */
-            }
+        /* Sticky sidebar for filters */
+        #filter-column {
+            position: sticky;
+            top: 2rem;
+            align-self: flex-start;
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="container mx-auto p-4 md:p-6">
+    <div class="container mx-auto p-4 md:p-8">
         
         <header class="text-center mb-8 md:mb-12">
             <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-2">MAP Training Hub</h1>
             <p class="text-base md:text-lg text-gray-600">Monitoring Macroprudential & Financial Stability Trainings</p>
         </header>
 
-        <div id="app-layout" class="md:grid md:grid-cols-4 md:gap-8">
-            
-            <!-- Filter Sidebar (Left column on md screens and up) -->
-            <aside id="filter-sidebar" class="md:col-span-1 bg-white p-6 rounded-xl shadow-md mb-8 md:mb-0 h-fit">
-                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
-                 <div id="filter-content" class="space-y-4">
-                    <!-- Filters will be populated here by JS -->
-                </div>
-            </aside>
+        <!-- TABS -->
+        <div class="mb-8">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <a href="#" id="tab-courses" class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page">
+                        Courses
+                    </a>
+                    <a href="#" id="tab-institutions" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Institutions
+                    </a>
+                </nav>
+            </div>
+        </div>
 
-            <!-- Main Content (Right column on md screens and up) -->
-            <div class="md:col-span-3">
-                <div id="loading-spinner" class="text-center py-16">
-                    <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="mt-4 text-gray-600">Loading courses...</p>
-                </div>
-
-                <main id="courses-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <!-- Course cards will be loaded here by JavaScript -->
-                </main>
-                
-                <div id="no-results" class="hidden text-center py-16">
-                    <p class="text-xl text-gray-500">No courses match the current filter criteria.</p>
+        <!-- COURSES CONTENT (Visible by default) -->
+        <div id="content-courses">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left Sidebar for Filters -->
+                <aside id="filter-column" class="lg:w-1/4 xl:w-1/5">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
+                        <div id="filter-content" class="grid grid-cols-1 gap-4">
+                            <!-- Filters will be populated here by JS -->
+                        </div>
+                    </div>
+                </aside>
+    
+                <!-- Main Content for Course Cards -->
+                <div class="lg:w-3/4 xl:w-4/5">
+                    <div id="loading-spinner" class="text-center py-16">
+                        <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-600">Loading courses...</p>
+                    </div>
+    
+                    <main id="courses-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Course cards will be loaded here by JavaScript -->
+                    </main>
+                    
+                    <div id="no-results" class="hidden text-center py-16">
+                        <p class="text-xl text-gray-500">No courses match the current filter criteria.</p>
+                    </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- INSTITUTIONS CONTENT (Hidden by default) -->
+        <div id="content-institutions" class="hidden">
+             <!-- Institution cards will be loaded here by JavaScript -->
+        </div>
+
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Common elements
+        const loadingSpinner = document.getElementById('loading-spinner');
+        
+        // Tab elements
+        const tabCourses = document.getElementById('tab-courses');
+        const tabInstitutions = document.getElementById('tab-institutions');
+        const contentCourses = document.getElementById('content-courses');
+        const contentInstitutions = document.getElementById('content-institutions');
+
+        // Course related elements
         const coursesContainer = document.getElementById('courses-container');
         const noResults = document.getElementById('no-results');
-        const filterContainer = document.getElementById('filter-content');
-        const loadingSpinner = document.getElementById('loading-spinner');
+        const filterContent = document.getElementById('filter-content');
 
         let allCourses = [];
+        
+        const institutionsData = [
+            { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" },
+            { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" },
+            { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" },
+            { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" },
+            { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/" },
+            { name: "Federal Reserve System", url: "https://www.federalreserve.gov/conferences.htm" },
+            { name: "London School of Economics (LSE)", url: "https://www.lse.ac.uk/study-at-lse/short-courses" },
+            { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" },
+            { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/home/html/index.en.html" },
+        ];
 
-        // --- FETCH DATA FROM EXTERNAL JSON FILE ---
+
+        // --- DATA LOADING & INITIALIZATION ---
         async function loadCourses() {
             try {
                 const response = await fetch('courses_data.json'); 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 allCourses = await response.json();
                 loadingSpinner.classList.add('hidden');
                 populateFilters(allCourses);
@@ -102,6 +143,48 @@
             }
         }
         
+        // --- TAB SWITCHING LOGIC ---
+        function setupTabs() {
+            tabCourses.addEventListener('click', (e) => {
+                e.preventDefault();
+                activateTab(tabCourses, contentCourses);
+                deactivateTab(tabInstitutions, contentInstitutions);
+            });
+
+            tabInstitutions.addEventListener('click', (e) => {
+                e.preventDefault();
+                activateTab(tabInstitutions, contentInstitutions);
+                deactivateTab(tabCourses, contentCourses);
+            });
+        }
+
+        function activateTab(tab, content) {
+            tab.classList.add('border-blue-500', 'text-blue-600');
+            tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            tab.setAttribute('aria-current', 'page');
+            content.classList.remove('hidden');
+        }
+
+        function deactivateTab(tab, content) {
+            tab.classList.remove('border-blue-500', 'text-blue-600');
+            tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            tab.removeAttribute('aria-current');
+            content.classList.add('hidden');
+        }
+
+        // --- INSTITUTIONS PAGE LOGIC ---
+        function displayInstitutions() {
+            const institutionCardsHtml = institutionsData.map(inst => `
+                <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 card-hover">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">${inst.name}</h3>
+                    <p class="text-sm text-blue-600 hover:underline">Go to training page →</p>
+                </a>
+            `).join('');
+            
+            contentInstitutions.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${institutionCardsHtml}</div>`;
+        }
+
+        // --- COURSES PAGE LOGIC ---
         function getUniqueValues(courses, key) {
             const values = courses.flatMap(course => course[key] || []);
             return [...new Set(values)].sort();
@@ -113,7 +196,7 @@
             const formats = getUniqueValues(courses, 'format');
             const locations = getUniqueValues(courses, 'location');
 
-            filterContainer.innerHTML = `
+            filterContent.innerHTML = `
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                     <input type="text" id="search" placeholder="Keyword (e.g. stress test)" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -124,7 +207,6 @@
                 ${createSelectFilter('location', 'Location', locations)}
             `;
 
-            // Add event listeners after filters are created
             document.getElementById('search').addEventListener('input', applyFilters);
             document.getElementById('filter-institution').addEventListener('change', applyFilters);
             document.getElementById('filter-topic').addEventListener('change', applyFilters);
@@ -134,7 +216,7 @@
 
         function createSelectFilter(id, label, options) {
             return `
-                <div>
+                <div class="mb-4">
                     <label for="filter-${id}" class="block text-sm font-medium text-gray-700 mb-1">${label}</label>
                     <select id="filter-${id}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                         <option value="all">All</option>
@@ -146,17 +228,13 @@
         
         function displayCourses(courses) {
             coursesContainer.innerHTML = '';
-            if (courses.length === 0) {
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-            }
+            noResults.classList.toggle('hidden', courses.length > 0);
 
             courses.forEach(course => {
                 const courseCard = document.createElement('div');
                 courseCard.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col transition-all duration-300 card-hover';
                 
-                const topicsHtml = course.topics.map(topic => `<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
+                const topicsHtml = (course.topics || []).map(topic => `<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
 
                 courseCard.innerHTML = `
                     <div class="flex-grow">
@@ -172,21 +250,12 @@
                             ${topicsHtml}
                         </div>
                         <div class="border-t border-gray-200 pt-4">
-                             <div class="space-y-2 text-sm text-gray-600 mb-4">
-                                <div class="flex justify-between">
-                                    <strong class="text-gray-500">Date:</strong>
-                                    <span class="text-right">${course.date}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <strong class="text-gray-500">Location:</strong>
-                                    <span class="text-right">${course.location}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <strong class="text-gray-500">Tuition Fee:</strong>
-                                    <span class="font-semibold text-right">${course.tuition_fee}</span>
-                                </div>
-                            </div>
-                            <a href="${course.url}" target="_blank" class="block w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
+                             <div class="space-y-2 text-sm text-gray-500 mb-4">
+                                <p><strong>Date:</strong> ${course.date}</p>
+                                <p><strong>Location:</strong> ${course.location}</p>
+                                <p><strong>Tuition:</strong> ${course.tuition_fee}</p>
+                             </div>
+                            <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
                                 Go to Course
                             </a>
                         </div>
@@ -219,6 +288,8 @@
         }
 
         // --- INITIAL LOAD ---
+        setupTabs();
+        displayInstitutions();
         loadCourses();
     });
     </script>
