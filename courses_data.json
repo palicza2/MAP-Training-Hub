@@ -1,46 +1,124 @@
 [
-  {
-    "id": 1,
-    "title": "Systemic Macro-Financial Risk Analysis",
-    "institution": "IMF",
-    "date": "2025. October 6-17.",
-    "location": "Washington, D.C., USA",
-    "format": "On-site",
-    "description": "A comprehensive overview of the theories, tools, and techniques necessary for thorough financial stability analysis.",
-    "topics": ["Financial Stability", "Stress Testing"],
-    "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MFRA"
-  },
-  {
-    "id": 2,
-    "title": "Macroprudential Policy: Implementing the Financial Stability Mandate",
-    "institution": "BIS",
-    "date": "2025. November 3-7.",
-    "location": "Basel, Switzerland",
-    "format": "On-site",
-    "description": "Practical training on the effective use of macroprudential instruments and related governance issues.",
-    "topics": ["Macroprudential Policy"],
-    "url": "https://www.bis.org/fsi/fsi_events.htm"
-  },
-  {
-    "id": 3,
-    "title": "Climate Risks in the Financial System (Online)",
-    "institution": "ECB",
-    "date": "2025. September 22-26.",
-    "location": "Online",
-    "format": "Online",
-    "description": "An introduction to measuring and managing the impact of climate change on financial stability.",
-    "topics": ["Financial Stability", "Climate Risks"],
-    "url": "#"
-  },
-  {
-    "id": 4,
-    "title": "Summer School on Financial Regulation",
-    "institution": "LSE",
-    "date": "2026. July 13-24.",
-    "location": "London, UK",
-    "format": "On-site",
-    "description": "An intensive course covering the latest developments in financial regulation and supervision.",
-    "topics": ["Financial Stability", "Macroprudential Policy"],
-    "url": "#"
-  }
+    {
+        "id": 1,
+        "title": "Systemic Macro-Financial Risk Analysis (MFRA)",
+        "institution": "IMF",
+        "date": "Jan 27 - Feb 7, 2026",
+        "location": "Washington, D.C.",
+        "format": "On-site",
+        "description": "This course provides participants with a comprehensive understanding of the theories, tools, and techniques needed to conduct thorough financial stability analysis.",
+        "topics": ["Financial Stability", "Stress Testing"],
+        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MFRA"
+    },
+    {
+        "id": 2,
+        "title": "Macroprudential Policy Implementation and Challenges",
+        "institution": "BIS",
+        "date": "Nov 3-7, 2025",
+        "location": "Basel, Switzerland",
+        "format": "On-site",
+        "description": "Practical training on the effective use of macroprudential instruments and related governance issues.",
+        "topics": ["Macroprudential Policy"],
+        "url": "https://www.bis.org/fsi/fsi_events.htm"
+    },
+    {
+        "id": 3,
+        "title": "Climate Risks in the Financial System (Online)",
+        "institution": "ECB",
+        "date": "Sep 22-26, 2025",
+        "location": "Online",
+        "format": "Online",
+        "description": "Introduction to measuring and managing the impact of climate change on financial stability.",
+        "topics": ["Financial Stability", "Climate Risks"],
+        "url": "https://www.ecb.europa.eu/home/html/index.en.html"
+    },
+    {
+        "id": 4,
+        "title": "Financial Stability Policies (FSP)",
+        "institution": "JVI",
+        "date": "Feb 24 - Mar 7, 2026",
+        "location": "Vienna, Austria",
+        "format": "On-site",
+        "description": "Presented by the IMF, this course provides a comprehensive overview of policies to safeguard financial stability, covering both micro- and macroprudential perspectives.",
+        "topics": ["Financial Stability", "Macroprudential Policy"],
+        "url": "https://www.jvi.org/training/course-schedules/2026/financial-stability-policies.html"
+    },
+    {
+        "id": 5,
+        "title": "Advanced Stress Testing for Financial Institutions",
+        "institution": "BoE",
+        "date": "Nov 10-14, 2025",
+        "location": "London, UK",
+        "format": "On-site",
+        "description": "Deep dive into advanced methodologies for solvency and liquidity stress testing for banks and insurers.",
+        "topics": ["Stress Testing", "Financial Stability"],
+        "url": "https://www.bankofengland.co.uk/ccbs"
+    },
+    {
+        "id": 6,
+        "title": "FinTech and the Future of Finance (Online)",
+        "institution": "LSE",
+        "date": "Jan 12-23, 2026",
+        "location": "Online",
+        "format": "Online",
+        "description": "Examines the impact of digitalization, crypto-assets, and AI on financial markets and stability.",
+        "topics": ["Digitalization & FinTech", "Financial Stability"],
+        "url": "https://www.lse.ac.uk/study-at-lse/short-courses"
+    },
+    {
+        "id": 7,
+        "title": "Financial Stability Policy of the Eurosystem",
+        "institution": "Bundesbank",
+        "date": "Sep 15-19, 2025",
+        "location": "Frankfurt, Germany",
+        "format": "On-site",
+        "description": "Covers the institutional framework and practical implementation of macroprudential policy in the euro area.",
+        "topics": ["Macroprudential Policy"],
+        "url": "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue"
+    },
+    {
+        "id": 8,
+        "title": "Climate Stress Testing Seminar",
+        "institution": "BdF",
+        "date": "Apr 7-9, 2026",
+        "location": "Paris, France",
+        "format": "On-site",
+        "description": "A high-level seminar on the latest methodologies for climate scenario analysis and its impact on the banking sector.",
+        "topics": ["Climate Risks", "Stress Testing"],
+        "url": "https://www.banque-france.fr/en"
+    },
+    {
+        "id": 9,
+        "title": "Financial Soundness Indicators (FSI-C)",
+        "institution": "IMF",
+        "date": "Nov 3-14, 2025",
+        "location": "Online",
+        "format": "Online",
+        "description": "This course introduces the compilation and use of Financial Soundness Indicators (FSIs) for macroprudential analysis and surveillance of the financial sector.",
+        "topics": ["Financial Stability", "Macroprudential Policy"],
+        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/FSI-C"
+    },
+    {
+        "id": 10,
+        "title": "Applied Economic Forecasting (AEF)",
+        "institution": "JVI",
+        "date": "Mar 10-21, 2026",
+        "location": "Vienna, Austria",
+        "format": "On-site",
+        "description": "A course by the Austrian National Bank on practical forecasting of key macroeconomic variables relevant for policy making.",
+        "topics": ["Econometrics", "Financial Stability"],
+        "url": "https://www.jvi.org/training/course-schedules/2026/applied-economic-forecasting.html"
+    },
+    {
+        "id": 11,
+        "title": "Macroeconomic Diagnostics (MDS)",
+        "institution": "IMF",
+        "date": "Dec 1-12, 2025",
+        "location": "Online",
+        "format": "Online",
+        "description": "Provides a rigorous foundation for assessing a country’s macroeconomic situation, identifying vulnerabilities, and formulating corrective policies.",
+        "topics": ["Financial Stability", "Macroprudential Policy"],
+        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MDS"
+    }
 ]
+
