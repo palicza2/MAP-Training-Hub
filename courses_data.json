@@ -1,39 +1,87 @@
 [
-    {
-        "id": 9,
-        "title": "Financial Soundness Indicators (FSI-C)",
-        "institution": "IMF",
-        "date": "Nov 3-14, 2025",
-        "location": "Online",
-        "format": "Online",
-        "description": "This course introduces the compilation and use of Financial Soundness Indicators (FSIs) for macroprudential analysis and surveillance of the financial sector.",
-        "topics": ["Financial Stability", "Macroprudential Policy"],
-        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/FSI-C",
-        "tuition_fee": "Free for member country officials"
-    },
-    {
-        "id": 11,
-        "title": "Macroeconomic Diagnostics (MDS)",
-        "institution": "IMF",
-        "date": "Dec 1-12, 2025",
-        "location": "Online",
-        "format": "Online",
-        "description": "Provides a rigorous foundation for assessing a country’s macroeconomic situation, identifying vulnerabilities, and formulating corrective policies.",
-        "topics": ["Financial Stability", "Macroprudential Policy"],
-        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MDS",
-        "tuition_fee": "Free for member country officials"
-    },
-    {
-        "id": 1,
-        "title": "Systemic Macro-Financial Risk Analysis (MFRA)",
-        "institution": "IMF",
-        "date": "Jan 27 - Feb 7, 2026",
-        "location": "Washington, D.C.",
-        "format": "On-site",
-        "description": "This course provides participants with a comprehensive understanding of the theories, tools, and techniques needed to conduct thorough financial stability analysis.",
-        "topics": ["Financial Stability", "Stress Testing"],
-        "url": "https://www.imf.org/en/Capacity-Development/Training/ICDTC/Courses/MFRA",
-        "tuition_fee": "Free for member country officials"
-    }
+  {
+    "id": 101,
+    "title": "Tax Policy and Administration: Theory and Practice",
+    "start_date": "2026-01-05",
+    "end_date": "2026-01-16",
+    "display_date": "Jan 5 - 16, 2026",
+    "institution": "JVI",
+    "format": "On-site",
+    "topics": ["Fiscal Policy"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/tax-policy-and-administration-theory-and-practice.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 102,
+    "title": "Competitiveness, Growth, and Crises",
+    "start_date": "2026-02-02",
+    "end_date": "2026-02-13",
+    "display_date": "Feb 2 - 13, 2026",
+    "institution": "IMF",
+    "format": "On-site",
+    "topics": ["Macroeconomic Management"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/competitiveness-growth-and-crises.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 103,
+    "title": "Financial Stability Policies",
+    "start_date": "2026-02-24",
+    "end_date": "2026-03-07",
+    "display_date": "Feb 24 - Mar 7, 2026",
+    "institution": "IMF",
+    "format": "On-site",
+    "topics": ["Financial Stability", "Macroprudential Policy"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/financial-stability-policies.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 104,
+    "title": "Applied Economic Forecasting",
+    "start_date": "2026-03-10",
+    "end_date": "2026-03-21",
+    "display_date": "Mar 10 - 21, 2026",
+    "institution": "OeNB",
+    "format": "On-site",
+    "topics": ["Econometrics", "Forecasting"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/applied-economic-forecasting.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 105,
+    "title": "Monetary Policy",
+    "start_date": "2026-06-02",
+    "end_date": "2026-06-13",
+    "display_date": "Jun 2 - 13, 2026",
+    "institution": "SNB",
+    "format": "On-site",
+    "topics": ["Monetary Policy"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/monetary-policy.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 106,
+    "title": "Gender Equality and Economics",
+    "start_date": "2026-06-16",
+    "end_date": "2026-06-20",
+    "display_date": "Jun 16 - 20, 2026",
+    "institution": "IMF",
+    "format": "On-site",
+    "topics": ["Inclusive Growth"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/gender-equality-and-economics.html",
+    "tuition_fee": "Free for eligible participants"
+  },
+  {
+    "id": 107,
+    "title": "Macroeconomic Management in Resource-Rich Countries",
+    "start_date": "2026-07-06",
+    "end_date": "2026-07-17",
+    "display_date": "Jul 6 - 17, 2026",
+    "institution": "IMF",
+    "format": "On-site",
+    "topics": ["Macroeconomic Management"],
+    "url": "https://www.jvi.org/training/course-schedules/2026/macroeconomic-management-in-resource-rich-countries.html",
+    "tuition_fee": "Free for eligible participants"
+  }
 ]
 
