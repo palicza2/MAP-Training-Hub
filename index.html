@@ -55,7 +55,7 @@
         <!-- CONTENT AREA -->
         <div id="content-courses">
             <div class="flex flex-col lg:flex-row gap-8">
-                <aside id="filter-column" class="lg:w-1/4 xl:w-1/5 lg:sticky lg:top-8 lg:self-start">
+                <aside id="filter-column" class="lg:w-1/4 xl:w-1/5 lg:sticky lg:top-8 lg:self-start transform-gpu">
                     <div class="bg-white p-6 rounded-xl shadow-md">
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
                         <div id="filter-content" class="grid grid-cols-1 gap-4"></div>
@@ -135,9 +135,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
         // IMPORTANT: Replace these placeholders with your actual Supabase credentials
-        const SUPABASE_URL = 'https://nkhhzkwljovjbacxewqq.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NjAwMjEsImV4cCI6MjA3NDIzNjAyMX0.2HgSxzVMtPoOjlTKyVyuADbi77aufW7msLVPmtALUlc'; 
-        const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODY2MDAyMSwiZXhwIjoyMDc0MjM2MDIxfQ.dRpyruTHe-L3sLiNrbiuSRRc7mYJxJTtEPqtsSoDf-4'; // KEEP THIS SECRET
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; 
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_PUBLIC_ANON_KEY'; 
+        const SUPABASE_SERVICE_KEY = 'YOUR_SUPABASE_SECRET_SERVICE_ROLE_KEY'; // KEEP THIS SECRET
 
         // --- ELEMENT SELECTORS ---
         const loadingSpinner = document.getElementById('loading-spinner');
