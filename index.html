@@ -199,8 +199,8 @@
                 // const response = await fetch('https://YOUR_RENDER_API_URL.onrender.com/api/courses'); 
 
                 // --- ADD THESE NEW LINES ---
-                const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // From Supabase API settings
-                const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLIC_ANON_KEY'; // From Supabase API settings
+                const SUPABASE_URL = 'https://nkhhzkwljovjbacxewqq.supabase.co'; // From Supabase API settings
+                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NjAwMjEsImV4cCI6MjA3NDIzNjAyMX0.2HgSxzVMtPoOjlTKyVyuADbi77aufW7msLVPmtALUlc'; // From Supabase API settings
 
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?select=*&order=start_date.asc`, {
                     headers: {
