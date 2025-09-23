@@ -6,7 +6,6 @@
     <title>MAP Training Hub - Financial Stability Courses</title>
     <link rel="icon" type="image/png" href="https://placehold.co/32x32/003366/FFFFFF?text=MTH">
     
-    <!-- Meta Tags for Social Sharing -->
     <meta property="og:title" content="MAP Training Hub - Financial Stability Courses">
     <meta property="og:description" content="A curated, searchable database of macroprudential and financial stability trainings from central banks and international institutions.">
     <meta property="og:image" content="https://raw.githubusercontent.com/palicza2/MAP-Training-Hub/main/social_preview.png">
@@ -37,7 +36,6 @@
             <p class="text-base md:text-lg text-gray-600">Monitoring Macroprudential & Financial Stability Trainings</p>
         </header>
 
-        <!-- TABS -->
         <div class="mb-8">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -51,20 +49,16 @@
             </div>
         </div>
 
-        <!-- COURSES CONTENT (Visible by default) -->
         <div id="content-courses">
             <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Left Sidebar for Filters -->
                 <aside id="filter-column" class="lg:w-1/4 xl:w-1/5 lg:sticky lg:top-8 lg:self-start">
                     <div class="bg-white p-6 rounded-xl shadow-md">
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
                         <div id="filter-content" class="grid grid-cols-1 gap-4">
-                            <!-- Filters will be populated here by JS -->
-                        </div>
+                            </div>
                     </div>
                 </aside>
     
-                <!-- Main Content for Course Cards -->
                 <div class="lg:w-3/4 xl:w-4/5">
                     <div id="loading-spinner" class="text-center py-16">
                         <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -73,10 +67,14 @@
                         </svg>
                         <p class="mt-4 text-gray-600">Loading courses...</p>
                     </div>
+
+                    <div id="filter-info-bar" class="mb-4 flex justify-between items-center hidden">
+                        <span id="results-count" class="text-sm text-gray-600"></span>
+                        <button id="reset-filters-btn" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Reset Filters</button>
+                    </div>
     
                     <main id="courses-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <!-- Course cards will be loaded here by JavaScript -->
-                    </main>
+                        </main>
                     
                     <div id="no-results" class="hidden text-center py-16">
                         <p class="text-xl text-gray-500">No courses match the current filter criteria.</p>
@@ -85,28 +83,29 @@
             </div>
         </div>
 
-        <!-- INSTITUTIONS CONTENT (Hidden by default) -->
         <div id="content-institutions" class="hidden">
-             <!-- Institution cards will be loaded here by JavaScript -->
-        </div>
+             </div>
 
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Common elements
+        // --- COMMON ELEMENTS ---
         const loadingSpinner = document.getElementById('loading-spinner');
         
-        // Tab elements
+        // --- TAB ELEMENTS ---
         const tabCourses = document.getElementById('tab-courses');
         const tabInstitutions = document.getElementById('tab-institutions');
         const contentCourses = document.getElementById('content-courses');
         const contentInstitutions = document.getElementById('content-institutions');
 
-        // Course related elements
+        // --- COURSE ELEMENTS ---
         const coursesContainer = document.getElementById('courses-container');
         const noResults = document.getElementById('no-results');
         const filterContent = document.getElementById('filter-content');
+        const filterInfoBar = document.getElementById('filter-info-bar');
+        const resultsCountEl = document.getElementById('results-count');
+        const resetFiltersBtn = document.getElementById('reset-filters-btn');
 
         let allCourses = [];
         
@@ -186,34 +185,40 @@
         }
 
         function populateFilters(courses) {
-            const institutions = getUniqueValues(courses, 'institution');
-            const topics = getUniqueValues(courses, 'topics');
-            const formats = getUniqueValues(courses, 'format');
-            const locations = getUniqueValues(courses, 'location');
+            const filterConfig = [
+                { id: 'institution', label: 'Institution', values: getUniqueValues(courses, 'institution') },
+                { id: 'topic',       label: 'Topic',       values: getUniqueValues(courses, 'topics') },
+                { id: 'format',      label: 'Format',      values: getUniqueValues(courses, 'format') },
+                { id: 'location',    label: 'Location',    values: getUniqueValues(courses, 'location') }
+            ];
 
-            filterContent.innerHTML = `
+            let filtersHtml = `
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                     <input type="text" id="search" placeholder="Keyword (e.g. stress test)" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
-                ${createSelectFilter('institution', 'Institution', institutions)}
-                ${createSelectFilter('topic', 'Topic', topics)}
-                ${createSelectFilter('format', 'Format', formats)}
-                ${createSelectFilter('location', 'Location', locations)}
             `;
 
-            document.getElementById('search').addEventListener('input', applyFilters);
-            document.getElementById('filter-institution').addEventListener('change', applyFilters);
-            document.getElementById('filter-topic').addEventListener('change', applyFilters);
-            document.getElementById('filter-format').addEventListener('change', applyFilters);
-            document.getElementById('filter-location').addEventListener('change', applyFilters);
+            filterConfig.forEach(config => {
+                if (config.values.length > 0) { // Only create filter if there are options
+                    filtersHtml += createSelectFilter(config.id, config.label, config.values);
+                }
+            });
+            
+            filterContent.innerHTML = filtersHtml;
+
+            document.querySelectorAll('#search, select[id^="filter-"]').forEach(el => {
+                const eventType = el.tagName === 'INPUT' ? 'input' : 'change';
+                el.addEventListener(eventType, applyFilters);
+            });
+            resetFiltersBtn.addEventListener('click', resetFilters);
         }
 
         function createSelectFilter(id, label, options) {
             return `
-                <div class="mb-4">
+                <div class="mb-2">
                     <label for="filter-${id}" class="block text-sm font-medium text-gray-700 mb-1">${label}</label>
-                    <select id="filter-${id}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <select id="filter-${id}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
                         <option value="all">All</option>
                         ${options.map(option => `<option value="${option}">${option}</option>`).join('')}
                     </select>
@@ -262,11 +267,11 @@
 
         function applyFilters() {
             const searchTerm = document.getElementById('search').value.toLowerCase();
-            const institution = document.getElementById('filter-institution').value;
-            const topic = document.getElementById('filter-topic').value;
-            const format = document.getElementById('filter-format').value;
-            const location = document.getElementById('filter-location').value;
-
+            const institution = document.getElementById('filter-institution')?.value || 'all';
+            const topic = document.getElementById('filter-topic')?.value || 'all';
+            const format = document.getElementById('filter-format')?.value || 'all';
+            const location = document.getElementById('filter-location')?.value || 'all';
+            
             const filteredCourses = allCourses.filter(course => {
                 const searchMatch = searchTerm === '' ||
                     course.title.toLowerCase().includes(searchTerm) ||
@@ -279,7 +284,23 @@
 
                 return searchMatch && institutionMatch && topicMatch && formatMatch && locationMatch;
             });
+
+            const isAnyFilterActive = searchTerm !== '' || institution !== 'all' || topic !== 'all' || format !== 'all' || location !== 'all';
+            
+            if (isAnyFilterActive) {
+                filterInfoBar.classList.remove('hidden');
+                resultsCountEl.textContent = `Showing ${filteredCourses.length} of ${allCourses.length} courses.`;
+            } else {
+                filterInfoBar.classList.add('hidden');
+            }
+
             displayCourses(filteredCourses);
+        }
+
+        function resetFilters() {
+            document.getElementById('search').value = '';
+            document.querySelectorAll('select[id^="filter-"]').forEach(select => select.value = 'all');
+            applyFilters();
         }
 
         // --- INITIAL LOAD ---
@@ -290,4 +311,3 @@
     </script>
 </body>
 </html>
-
