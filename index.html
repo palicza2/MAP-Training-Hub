@@ -6,6 +6,7 @@
     <title>MAP Training Hub - Financial Stability Courses</title>
     <link rel="icon" type="image/png" href="https://placehold.co/32x32/003366/FFFFFF?text=MTH">
     
+    <!-- Meta Tags for Social Sharing -->
     <meta property="og:title" content="MAP Training Hub - Financial Stability Courses">
     <meta property="og:description" content="A curated, searchable database of macroprudential and financial stability trainings from central banks and international institutions.">
     <meta property="og:image" content="https://raw.githubusercontent.com/palicza2/MAP-Training-Hub/main/social_preview.png">
@@ -21,9 +22,16 @@
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
         }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        th.sortable {
+            cursor: pointer;
+        }
+        th.sortable:hover {
+            background-color: #f0f4f8;
+        }
+        .sort-indicator {
+            display: inline-block;
+            width: 1em;
+            text-align: right;
         }
     </style>
 </head>
@@ -36,6 +44,7 @@
             <p class="text-base md:text-lg text-gray-600">Monitoring Macroprudential & Financial Stability Trainings</p>
         </header>
 
+        <!-- TABS -->
         <div class="mb-8">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -49,16 +58,20 @@
             </div>
         </div>
 
+        <!-- COURSES CONTENT (Visible by default) -->
         <div id="content-courses">
             <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left Sidebar for Filters -->
                 <aside id="filter-column" class="lg:w-1/4 xl:w-1/5 lg:sticky lg:top-8 lg:self-start">
                     <div class="bg-white p-6 rounded-xl shadow-md">
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
                         <div id="filter-content" class="grid grid-cols-1 gap-4">
-                            </div>
+                            <!-- Filters will be populated here by JS -->
+                        </div>
                     </div>
                 </aside>
     
+                <!-- Main Content for Course Table -->
                 <div class="lg:w-3/4 xl:w-4/5">
                     <div id="loading-spinner" class="text-center py-16">
                         <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -67,14 +80,25 @@
                         </svg>
                         <p class="mt-4 text-gray-600">Loading courses...</p>
                     </div>
-
-                    <div id="filter-info-bar" class="mb-4 flex justify-between items-center hidden">
-                        <span id="results-count" class="text-sm text-gray-600"></span>
-                        <button id="reset-filters-btn" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Reset Filters</button>
-                    </div>
     
-                    <main id="courses-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        </main>
+                    <div class="bg-white p-4 rounded-xl shadow-md hidden" id="table-container">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="title">Course <span class="sort-indicator"></span></th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="start_date">Start Date <span class="sort-indicator"></span></th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="courses-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- Table rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     
                     <div id="no-results" class="hidden text-center py-16">
                         <p class="text-xl text-gray-500">No courses match the current filter criteria.</p>
@@ -83,34 +107,30 @@
             </div>
         </div>
 
+        <!-- INSTITUTIONS CONTENT (Hidden by default) -->
         <div id="content-institutions" class="hidden">
-             </div>
+             <!-- Institution cards will be loaded here by JavaScript -->
+        </div>
 
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- COMMON ELEMENTS ---
         const loadingSpinner = document.getElementById('loading-spinner');
-        
-        // --- TAB ELEMENTS ---
         const tabCourses = document.getElementById('tab-courses');
         const tabInstitutions = document.getElementById('tab-institutions');
         const contentCourses = document.getElementById('content-courses');
         const contentInstitutions = document.getElementById('content-institutions');
-
-        // --- COURSE ELEMENTS ---
-        const coursesContainer = document.getElementById('courses-container');
+        const tableContainer = document.getElementById('table-container');
+        const coursesTableBody = document.getElementById('courses-table-body');
         const noResults = document.getElementById('no-results');
         const filterContent = document.getElementById('filter-content');
-        const filterInfoBar = document.getElementById('filter-info-bar');
-        const resultsCountEl = document.getElementById('results-count');
-        const resetFiltersBtn = document.getElementById('reset-filters-btn');
 
         let allCourses = [];
+        let currentSort = { column: 'start_date', direction: 'asc' };
         
         const institutionsData = [
-            { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" },
+             { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" },
             { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" },
             { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" },
             { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" },
@@ -121,97 +141,70 @@
             { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/home/html/index.en.html" },
         ];
 
-
-        // --- DATA LOADING & INITIALIZATION ---
         async function loadCourses() {
             try {
                 const response = await fetch('courses_data.json'); 
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 allCourses = await response.json();
                 loadingSpinner.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
                 populateFilters(allCourses);
-                displayCourses(allCourses);
+                sortAndDisplayCourses();
             } catch (error) {
                 loadingSpinner.innerHTML = `<p class="text-red-500">Error loading courses. Please check if 'courses_data.json' exists and is correctly formatted.</p>`;
                 console.error("Failed to load courses:", error);
             }
         }
         
-        // --- TAB SWITCHING LOGIC ---
         function setupTabs() {
-            tabCourses.addEventListener('click', (e) => {
-                e.preventDefault();
-                activateTab(tabCourses, contentCourses);
-                deactivateTab(tabInstitutions, contentInstitutions);
-            });
-
-            tabInstitutions.addEventListener('click', (e) => {
-                e.preventDefault();
-                activateTab(tabInstitutions, contentInstitutions);
-                deactivateTab(tabCourses, contentCourses);
-            });
+            tabCourses.addEventListener('click', (e) => { e.preventDefault(); activateTab(tabCourses, contentCourses); deactivateTab(tabInstitutions, contentInstitutions); });
+            tabInstitutions.addEventListener('click', (e) => { e.preventDefault(); activateTab(tabInstitutions, contentInstitutions); deactivateTab(tabCourses, contentCourses); });
         }
 
         function activateTab(tab, content) {
             tab.classList.add('border-blue-500', 'text-blue-600');
-            tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            tab.setAttribute('aria-current', 'page');
+            tab.classList.remove('border-transparent', 'text-gray-500');
             content.classList.remove('hidden');
         }
 
         function deactivateTab(tab, content) {
             tab.classList.remove('border-blue-500', 'text-blue-600');
-            tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            tab.removeAttribute('aria-current');
+            tab.classList.add('border-transparent', 'text-gray-500');
             content.classList.add('hidden');
         }
 
-        // --- INSTITUTIONS PAGE LOGIC ---
         function displayInstitutions() {
             const institutionCardsHtml = institutionsData.map(inst => `
-                <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 card-hover">
+                <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300">
                     <h3 class="text-lg font-bold text-gray-900 mb-2">${inst.name}</h3>
                     <p class="text-sm text-blue-600 hover:underline">Go to training page →</p>
                 </a>
             `).join('');
-            
             contentInstitutions.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${institutionCardsHtml}</div>`;
         }
 
-        // --- COURSES PAGE LOGIC ---
         function getUniqueValues(courses, key) {
             const values = courses.flatMap(course => course[key] || []);
             return [...new Set(values)].sort();
         }
 
         function populateFilters(courses) {
-            const filterConfig = [
-                { id: 'institution', label: 'Institution', values: getUniqueValues(courses, 'institution') },
-                { id: 'topic',       label: 'Topic',       values: getUniqueValues(courses, 'topics') },
-                { id: 'format',      label: 'Format',      values: getUniqueValues(courses, 'format') },
-                { id: 'location',    label: 'Location',    values: getUniqueValues(courses, 'location') }
-            ];
-
-            let filtersHtml = `
+            const institutions = getUniqueValues(courses, 'institution');
+            const topics = getUniqueValues(courses, 'topics');
+            const formats = getUniqueValues(courses, 'format');
+            
+            filterContent.innerHTML = `
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                    <input type="text" id="search" placeholder="Keyword (e.g. stress test)" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <input type="text" id="search" placeholder="Keyword..." class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
+                ${createSelectFilter('institution', 'Provider', institutions)}
+                ${createSelectFilter('topic', 'Topic', topics)}
+                ${createSelectFilter('format', 'Format', formats)}
             `;
 
-            filterConfig.forEach(config => {
-                if (config.values.length > 0) { // Only create filter if there are options
-                    filtersHtml += createSelectFilter(config.id, config.label, config.values);
-                }
-            });
-            
-            filterContent.innerHTML = filtersHtml;
-
-            document.querySelectorAll('#search, select[id^="filter-"]').forEach(el => {
-                const eventType = el.tagName === 'INPUT' ? 'input' : 'change';
-                el.addEventListener(eventType, applyFilters);
-            });
-            resetFiltersBtn.addEventListener('click', resetFilters);
+            document.getElementById('search').addEventListener('input', sortAndDisplayCourses);
+            document.querySelectorAll('select[id^="filter-"]').forEach(el => el.addEventListener('change', sortAndDisplayCourses));
         }
 
         function createSelectFilter(id, label, options) {
@@ -226,88 +219,93 @@
             `;
         }
         
-        function displayCourses(courses) {
-            coursesContainer.innerHTML = '';
-            noResults.classList.toggle('hidden', courses.length > 0);
-
-            courses.forEach(course => {
-                const courseCard = document.createElement('div');
-                courseCard.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col transition-all duration-300 card-hover';
-                
-                const topicsHtml = (course.topics || []).map(topic => `<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
-
-                courseCard.innerHTML = `
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-sm font-semibold text-gray-500">${course.institution}</span>
-                            <span class="text-sm text-white ${course.format === 'Online' ? 'bg-green-500' : 'bg-indigo-500'} px-2 py-1 rounded-md">${course.format}</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">${course.title}</h3>
-                        <p class="text-sm text-gray-600 mb-4">${course.description}</p>
-                    </div>
-                    <div class="mt-auto">
-                        <div class="flex flex-wrap mb-4">
-                            ${topicsHtml}
-                        </div>
-                        <div class="border-t border-gray-200 pt-4">
-                             <div class="space-y-2 text-sm text-gray-500 mb-4">
-                                <p><strong>Date:</strong> ${course.date}</p>
-                                <p><strong>Location:</strong> ${course.location}</p>
-                                <p><strong>Tuition:</strong> ${course.tuition_fee}</p>
-                             </div>
-                            <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
-                                Go to Course
-                            </a>
-                        </div>
-                    </div>
-                `;
-                coursesContainer.appendChild(courseCard);
-            });
-        }
-
-        function applyFilters() {
+        function sortAndDisplayCourses() {
+            // --- 1. APPLY FILTERS ---
             const searchTerm = document.getElementById('search').value.toLowerCase();
             const institution = document.getElementById('filter-institution')?.value || 'all';
             const topic = document.getElementById('filter-topic')?.value || 'all';
             const format = document.getElementById('filter-format')?.value || 'all';
-            const location = document.getElementById('filter-location')?.value || 'all';
             
             const filteredCourses = allCourses.filter(course => {
-                const searchMatch = searchTerm === '' ||
-                    course.title.toLowerCase().includes(searchTerm) ||
-                    course.description.toLowerCase().includes(searchTerm);
-
+                const searchMatch = searchTerm === '' || course.title.toLowerCase().includes(searchTerm) || (course.topics || []).join(' ').toLowerCase().includes(searchTerm);
                 const institutionMatch = institution === 'all' || course.institution === institution;
                 const topicMatch = topic === 'all' || (course.topics && course.topics.includes(topic));
                 const formatMatch = format === 'all' || course.format === format;
-                const locationMatch = location === 'all' || course.location === location;
-
-                return searchMatch && institutionMatch && topicMatch && formatMatch && locationMatch;
+                return searchMatch && institutionMatch && topicMatch && formatMatch;
             });
 
-            const isAnyFilterActive = searchTerm !== '' || institution !== 'all' || topic !== 'all' || format !== 'all' || location !== 'all';
-            
-            if (isAnyFilterActive) {
-                filterInfoBar.classList.remove('hidden');
-                resultsCountEl.textContent = `Showing ${filteredCourses.length} of ${allCourses.length} courses.`;
-            } else {
-                filterInfoBar.classList.add('hidden');
-            }
+            // --- 2. SORT THE FILTERED RESULTS ---
+            filteredCourses.sort((a, b) => {
+                const valA = a[currentSort.column];
+                const valB = b[currentSort.column];
+                
+                let comparison = 0;
+                if (valA > valB) {
+                    comparison = 1;
+                } else if (valA < valB) {
+                    comparison = -1;
+                }
+                
+                return currentSort.direction === 'asc' ? comparison : comparison * -1;
+            });
 
-            displayCourses(filteredCourses);
+            // --- 3. DISPLAY IN TABLE ---
+            displayCoursesInTable(filteredCourses);
         }
 
-        function resetFilters() {
-            document.getElementById('search').value = '';
-            document.querySelectorAll('select[id^="filter-"]').forEach(select => select.value = 'all');
-            applyFilters();
+        function displayCoursesInTable(courses) {
+            coursesTableBody.innerHTML = '';
+            noResults.classList.toggle('hidden', courses.length > 0);
+
+            courses.forEach(course => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.end_date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td>
+                `;
+                coursesTableBody.appendChild(row);
+            });
+            updateSortIndicators();
+        }
+
+        function setupSorting() {
+            document.querySelectorAll('th.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.sort;
+                    if (currentSort.column === column) {
+                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.column = column;
+                        currentSort.direction = 'asc';
+                    }
+                    sortAndDisplayCourses();
+                });
+            });
+        }
+        
+        function updateSortIndicators() {
+            document.querySelectorAll('th.sortable .sort-indicator').forEach(indicator => {
+                indicator.textContent = '';
+            });
+            const activeHeader = document.querySelector(`th[data-sort="${currentSort.column}"] .sort-indicator`);
+            if (activeHeader) {
+                activeHeader.textContent = currentSort.direction === 'asc' ? '▲' : '▼';
+            }
         }
 
         // --- INITIAL LOAD ---
         setupTabs();
         displayInstitutions();
+        setupSorting();
         loadCourses();
     });
     </script>
 </body>
 </html>
+
