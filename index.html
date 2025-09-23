@@ -80,6 +80,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="start_date">Start Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topics</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
@@ -92,8 +93,16 @@
             </div>
         </div>
 
-        <div id="content-calendar" class="hidden"></div>
-        <div id="content-map" class="hidden"></div>
+        <div id="content-calendar" class="hidden">
+             <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Upcoming Courses</h2>
+                    <p class="text-gray-600">Today's Date: <span id="current-date" class="font-semibold"></span></p>
+                </div>
+                <div id="calendar-view-content" class="space-y-6"></div>
+            </div>
+        </div>
+        <div id="content-map" class="hidden"><div id="map"></div></div>
         <div id="content-institutions" class="hidden"></div>
     </div>
     
@@ -134,7 +143,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
-        // IMPORTANT: Replace these placeholders with your actual Supabase credentials
         const SUPABASE_URL = 'https://nkhhzkwljovjbacxewqq.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NjAwMjEsImV4cCI6MjA3NDIzNjAyMX0.2HgSxzVMtPoOjlTKyVyuADbi77aufW7msLVPmtALUlc'; 
         const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODY2MDAyMSwiZXhwIjoyMDc0MjM2MDIxfQ.dRpyruTHe-L3sLiNrbiuSRRc7mYJxJTtEPqtsSoDf-4'; // KEEP THIS SECRET
@@ -152,98 +160,72 @@
         const editForm = document.getElementById('edit-form');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
         const modalTitle = document.getElementById('modal-title');
+        const calendarViewContent = document.getElementById('calendar-view-content');
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
-        // --- STATE VARIABLES ---
+        // --- STATE ---
         let allCourses = [];
         let currentSort = { column: 'start_date', direction: 'asc' };
         let map;
         let mapInitialized = false;
 
+        // --- STATIC DATA ---
         const institutionsData = [ { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" }, { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" }, { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" }, { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" }, { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/" }, { name: "Federal Reserve System", url: "https://www.federalreserve.gov/conferences.htm" }, { name: "London School of Economics (LSE)", url: "https://www.lse.ac.uk/study-at-lse/short-courses" }, { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" }, { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/home/html/index.en.html" }, ];
         const locationCoordinates = { "Vienna, Austria": [48.2082, 16.3738], "Washington, D.C.": [38.9072, -77.0369], "Frankfurt, Germany": [50.1109, 8.6821], "Basel, Switzerland": [47.5596, 7.5886], };
 
-        // --- DATA FETCHING & SAVING ---
+        // --- DATA OPERATIONS ---
         async function loadData() {
             if (!SUPABASE_URL.includes('YOUR_SUPABASE')) {
                 try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?select=*&order=start_date.asc`, {
-                        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-                    });
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?select=*&order=start_date.asc`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     allCourses = await response.json();
                     tableContainer.classList.remove('hidden');
                     populateFilters(allCourses);
                     sortAndDisplayCourses();
                 } catch (error) {
-                    loadingSpinner.innerHTML = `<p class="text-red-500">Error loading data. Please check your Supabase URL and Key.</p>`;
+                    loadingSpinner.innerHTML = `<p class="text-red-500">Error loading data. Check Supabase credentials.</p>`;
                     console.error("Failed to load data:", error);
                 } finally {
                     loadingSpinner.classList.add('hidden');
                 }
             } else {
-                 loadingSpinner.innerHTML = `<p class="text-orange-500">Please configure your Supabase credentials in the index.html file.</p>`;
+                 loadingSpinner.innerHTML = `<p class="text-orange-500">Please configure Supabase credentials in index.html.</p>`;
             }
         }
 
         async function saveData(courseData, isNew = false) {
-            const url = isNew 
-                ? `${SUPABASE_URL}/rest/v1/courses` 
-                : `${SUPABASE_URL}/rest/v1/courses?id=eq.${courseData.id}`;
-            
+            const url = isNew ? `${SUPABASE_URL}/rest/v1/courses` : `${SUPABASE_URL}/rest/v1/courses?id=eq.${courseData.id}`;
             const method = isNew ? 'POST' : 'PATCH';
-            // For new records, Supabase requires 'return=representation' to get the new record back
-            const headers = {
-                'apikey': SUPABASE_SERVICE_KEY,
-                'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=representation', 
-            };
-
+            const headers = { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
             try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: headers,
-                    body: JSON.stringify(courseData),
-                });
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || `HTTP error! Status: ${response.status}`);
-                }
-                alert('Data saved successfully!');
+                const response = await fetch(url, { method, headers, body: JSON.stringify(courseData) });
+                if (!response.ok) { const error = await response.json(); throw new Error(error.message); }
+                alert('Data saved!');
                 closeEditModal();
-                loadData(); // Refresh all data from the database
+                loadData();
             } catch (error) {
                 alert(`Error saving data: ${error.message}`);
-                console.error("Failed to save data:", error);
+                console.error("Failed to save:", error);
             }
         }
 
         async function deleteData(courseId) {
-            if (!confirm('Are you sure you want to delete this course?')) return;
-
+            if (!confirm('Are you sure?')) return;
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?id=eq.${courseId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'apikey': SUPABASE_SERVICE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`
-                    }
-                });
-                if (!response.ok) {
-                     const error = await response.json();
-                    throw new Error(error.message || `HTTP error! Status: ${response.status}`);
-                }
-                alert('Course deleted successfully!');
-                loadData(); // Refresh
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?id=eq.${courseId}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } });
+                if (!response.ok) { const error = await response.json(); throw new Error(error.message); }
+                alert('Course deleted!');
+                loadData();
             } catch (error) {
                  alert(`Error deleting data: ${error.message}`);
-                console.error("Failed to delete data:", error);
+                 console.error("Failed to delete:", error);
             }
         }
         
         // --- TABS & UI ---
-        function setupTabs() { Object.keys(tabs).forEach(key => { tabs[key].addEventListener('click', (e) => { e.preventDefault(); switchTab(key); }); }); }
-        function switchTab(activeKey) { Object.keys(tabs).forEach(key => { const tab = tabs[key]; const content = contents[key]; if (key === activeKey) { tab.classList.add('border-blue-500', 'text-blue-600'); content.classList.remove('hidden'); } else { tab.classList.remove('border-blue-500', 'text-blue-600'); content.classList.add('hidden'); } }); if (activeKey === 'calendar') displayCalendarView(); if (activeKey === 'map') initMap(); if (activeKey === 'institutions') displayInstitutions(); }
+        function setupTabs() { Object.keys(tabs).forEach(key => tabs[key].addEventListener('click', (e) => { e.preventDefault(); switchTab(key); })); }
+        function switchTab(activeKey) { Object.keys(tabs).forEach(key => { const tab = tabs[key]; const content = contents[key]; tab.classList.toggle('border-blue-500', key === activeKey); tab.classList.toggle('text-blue-600', key === activeKey); tab.classList.toggle('border-transparent', key !== activeKey); tab.classList.toggle('text-gray-500', key !== activeKey); content.classList.toggle('hidden', key !== activeKey); }); if (activeKey === 'calendar') displayCalendarView(); if (activeKey === 'map') initMap(); if (activeKey === 'institutions') displayInstitutions(); }
         function displayInstitutions() { if (contents.institutions.innerHTML !== '') return; const i = institutionsData.map(inst => `<a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border"><h3 class="text-lg font-bold">${inst.name}</h3><p class="text-sm text-blue-600">Go to training page →</p></a>`).join(''); contents.institutions.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${i}</div>`; }
         function getUniqueValues(courses, key) { const v = courses.flatMap(c => c[key] || []); return [...new Set(v)].sort(); }
 
@@ -275,7 +257,7 @@
                 const row = coursesTableBody.insertRow();
                 row.className = 'hover:bg-gray-50';
                 const topicsHtml = (course.topics || []).map(topic => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
-                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td> <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4"><button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button><button data-course-id="${course.id}" class="delete-btn text-red-600 hover:text-red-800 font-semibold">Delete</button></td>`;
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td> <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4"><button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button><button data-course-id="${course.id}" class="delete-btn text-red-600 hover:text-red-800 font-semibold">Delete</button></td>`;
             });
             document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(e.target.dataset.courseId)));
             document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deleteData(e.target.dataset.courseId)));
@@ -285,13 +267,58 @@
         function setupSorting() { document.querySelectorAll('th.sortable').forEach(header => { header.addEventListener('click', () => { const c = header.dataset.sort; if (currentSort.column === c) { currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc'; } else { currentSort.column = c; currentSort.direction = 'asc'; } sortAndDisplayCourses(); }); }); }
         function updateSortIndicators() { document.querySelectorAll('th.sortable .sort-indicator').forEach(i => i.textContent = ''); const a = document.querySelector(`th[data-sort="${currentSort.column}"] .sort-indicator`); if (a) a.textContent = currentSort.direction === 'asc' ? '▲' : '▼'; }
         
-        function displayCalendarView() { /* ... Calendar logic remains the same ... */ }
-        function initMap() { /* ... Map logic remains the same ... */ }
+        // --- CALENDAR TAB LOGIC ---
+        function displayCalendarView() {
+            const now = new Date();
+            const upcomingCourses = allCourses
+                .filter(c => new Date(c.start_date.replace(/-/g, '/')) >= now)
+                .sort((a, b) => new Date(a.start_date.replace(/-/g, '/')) - new Date(b.start_date.replace(/-/g, '/')));
+            const coursesByMonth = upcomingCourses.reduce((acc, course) => {
+                const month = new Date(course.start_date.replace(/-/g, '/')).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                if (!acc[month]) acc[month] = []; acc[month].push(course);
+                return acc;
+            }, {});
+
+            if (Object.keys(coursesByMonth).length === 0) {
+                 calendarViewContent.innerHTML = `<p class="text-center text-gray-500">No upcoming courses found.</p>`;
+                 return;
+            }
+            calendarViewContent.innerHTML = Object.keys(coursesByMonth).sort((a, b) => new Date(a) - new Date(b)).map(month => `
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-700 border-b-2 border-blue-200 pb-2 mb-4">${month}</h3>
+                    <ul class="space-y-4">
+                        ${coursesByMonth[month].map(c => `
+                            <li class="flex items-start space-x-4">
+                                <div class="text-center flex-shrink-0 w-20">
+                                    <p class="font-bold text-lg text-gray-800">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { day: 'numeric' })}</p>
+                                    <p class="text-sm text-gray-500">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { weekday: 'short' })}</p>
+                                </div>
+                                <div class="border-l-2 border-gray-200 pl-4 flex-grow">
+                                    <a href="${c.url}" target="_blank" class="font-semibold text-blue-600 hover:underline">${c.title}</a>
+                                    <p class="text-sm text-gray-600">${c.institution} | ${c.start_date} to ${c.end_date}</p>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        // --- MAP TAB LOGIC ---
+        function initMap() {
+            if (mapInitialized) { setTimeout(() => map.invalidateSize(), 0); return; }
+            map = L.map('map').setView([48.2082, 16.3738], 4);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+            const physical = allCourses.filter(c => c.format === 'On-site' && locationCoordinates[c.location]);
+            physical.forEach(c => { const coords = locationCoordinates[c.location]; if (coords) { L.marker(coords).addTo(map).bindPopup(`<b>${c.title}</b><br>${c.institution}`); } });
+            mapInitialized = true;
+            setTimeout(() => map.invalidateSize(), 0);
+        }
 
         // --- MODAL & EDITING LOGIC ---
         function openEditModal(courseId = null) {
             editForm.reset();
-            if (courseId) { // Editing existing course
+            if (courseId) {
                 const course = allCourses.find(c => c.id == courseId);
                 if (!course) return;
                 modalTitle.textContent = 'Edit Course';
@@ -305,7 +332,7 @@
                 document.getElementById('edit-tuition-fee').value = course.tuition_fee;
                 document.getElementById('edit-topics').value = (course.topics || []).join(', ');
                 document.getElementById('edit-url').value = course.url;
-            } else { // Adding new course
+            } else {
                 modalTitle.textContent = 'Add New Course';
                 document.getElementById('edit-course-id').value = '';
             }
@@ -318,10 +345,7 @@
             e.preventDefault();
             const courseId = document.getElementById('edit-course-id').value;
             const isNew = courseId === '';
-
-            // Generate a new unique ID for new courses
             const newId = isNew ? Math.max(0, ...allCourses.map(c => c.id)) + 1 : parseInt(courseId);
-
             const courseData = {
                 id: newId,
                 title: document.getElementById('edit-title').value,
@@ -334,6 +358,8 @@
                 topics: document.getElementById('edit-topics').value.split(',').map(t => t.trim()).filter(Boolean),
                 url: document.getElementById('edit-url').value
             };
+            // Remove description if it exists, as it's not in the DB schema
+            delete courseData.description; 
             saveData(courseData, isNew);
         }
 
