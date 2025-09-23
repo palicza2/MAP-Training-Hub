@@ -88,8 +88,8 @@
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="title">Course <span class="sort-indicator"></span></th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="start_date">Start Date <span class="sort-indicator"></span></th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topics</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
                                     </tr>
                                 </thead>
@@ -166,6 +166,8 @@
         const locationCoordinates = {
             "Vienna, Austria": [48.2082, 16.3738],
             "Washington, D.C.": [38.9072, -77.0369],
+            "Frankfurt, Germany": [50.1109, 8.6821],
+            "Basel, Switzerland": [47.5596, 7.5886],
         };
 
         // --- DATA LOADING & INITIALIZATION ---
@@ -175,7 +177,6 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 allCourses = await response.json();
                 
-                // Initial setup for default tab
                 loadingSpinner.classList.add('hidden');
                 tableContainer.classList.remove('hidden');
                 populateFilters(allCourses);
@@ -212,15 +213,14 @@
                 }
             });
 
-            // Specific actions when switching to a tab
             if (activeKey === 'calendar') displayCalendarView();
-            if (activeKey === 'map' && !mapInitialized) initMap();
+            if (activeKey === 'map') initMap(); // Map initialization is now deferred
             if (activeKey === 'institutions') displayInstitutions();
         }
 
         // --- INSTITUTIONS TAB ---
         function displayInstitutions() {
-            if (contents.institutions.innerHTML !== '') return; // Lazy load
+            if (contents.institutions.innerHTML !== '') return;
             const institutionCardsHtml = institutionsData.map(inst => `
                 <a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300">
                     <h3 class="text-lg font-bold text-gray-900 mb-2">${inst.name}</h3>
@@ -278,11 +278,13 @@
             courses.forEach(course => {
                 const row = coursesTableBody.insertRow();
                 row.className = 'hover:bg-gray-50';
+                const topicsHtml = (course.topics || []).map(topic => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
+
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.end_date}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td>
                 `;
             });
@@ -313,12 +315,13 @@
         // --- CALENDAR TAB ---
         function displayCalendarView() {
             const now = new Date();
+            // Ensure date strings are parsed correctly, especially for cross-browser compatibility
             const upcomingCourses = allCourses
-                .filter(c => new Date(c.start_date) >= now)
-                .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+                .filter(c => new Date(c.start_date.replace(/-/g, '/')) >= now)
+                .sort((a, b) => new Date(a.start_date.replace(/-/g, '/')) - new Date(b.start_date.replace(/-/g, '/')));
 
             const coursesByMonth = upcomingCourses.reduce((acc, course) => {
-                const month = new Date(course.start_date).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                const month = new Date(course.start_date.replace(/-/g, '/')).toLocaleString('en-US', { month: 'long', year: 'numeric' });
                 if (!acc[month]) acc[month] = [];
                 acc[month].push(course);
                 return acc;
@@ -329,19 +332,19 @@
                  return;
             }
 
-            calendarView.innerHTML = Object.keys(coursesByMonth).map(month => `
+            calendarView.innerHTML = Object.keys(coursesByMonth).sort((a, b) => new Date(a) - new Date(b)).map(month => `
                 <div>
                     <h3 class="text-lg font-semibold text-blue-700 border-b-2 border-blue-200 pb-2 mb-4">${month}</h3>
                     <ul class="space-y-4">
                         ${coursesByMonth[month].map(c => `
                             <li class="flex items-start space-x-4">
                                 <div class="text-center flex-shrink-0 w-20">
-                                    <p class="font-bold text-lg text-gray-800">${new Date(c.start_date).toLocaleDateString('en-US', { day: 'numeric' })}</p>
-                                    <p class="text-sm text-gray-500">${new Date(c.start_date).toLocaleDateString('en-US', { weekday: 'short' })}</p>
+                                    <p class="font-bold text-lg text-gray-800">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { day: 'numeric' })}</p>
+                                    <p class="text-sm text-gray-500">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { weekday: 'short' })}</p>
                                 </div>
                                 <div class="border-l-2 border-gray-200 pl-4">
                                     <a href="${c.url}" target="_blank" class="font-semibold text-blue-600 hover:underline">${c.title}</a>
-                                    <p class="text-sm text-gray-600">${c.institution} | ${c.display_date}</p>
+                                    <p class="text-sm text-gray-600">${c.institution} | ${c.start_date} to ${c.end_date}</p>
                                 </div>
                             </li>
                         `).join('')}
@@ -352,8 +355,13 @@
 
         // --- MAP TAB ---
         function initMap() {
-            if (mapInitialized) return;
-            map = L.map('map').setView([48.2082, 16.3738], 4); // Center on Europe
+            if (mapInitialized) {
+                // If map was initialized while hidden, its size might be wrong.
+                // This ensures it resizes correctly when the tab is shown.
+                setTimeout(() => map.invalidateSize(), 0);
+                return;
+            }
+            map = L.map('map').setView([48.2082, 16.3738], 4);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -361,10 +369,13 @@
             const physicalCourses = allCourses.filter(c => c.format === 'On-site' && locationCoordinates[c.location]);
             physicalCourses.forEach(c => {
                 const coords = locationCoordinates[c.location];
-                L.marker(coords).addTo(map)
-                    .bindPopup(`<b>${c.title}</b><br>${c.institution}<br>${c.location}`);
+                if (coords) {
+                    L.marker(coords).addTo(map)
+                        .bindPopup(`<b>${c.title}</b><br>${c.institution}<br>${c.location}`);
+                }
             });
             mapInitialized = true;
+            setTimeout(() => map.invalidateSize(), 0);
         }
 
         // --- INITIAL LOAD ---
