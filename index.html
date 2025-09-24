@@ -186,7 +186,15 @@
             { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" }, 
             { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/events/html/index.en.html" }, 
         ];
-        const locationCoordinates = { "Vienna, Austria": [48.2082, 16.3738], "Washington, D.C.": [38.9072, -77.0369], "Frankfurt, Germany": [50.1109, 8.6821], "Basel, Switzerland": [47.5596, 7.5886], "Florence, Italy": [43.7793, 11.2558] };
+        const locationCoordinates = { 
+            "Vienna, Austria": [48.2082, 16.3738], 
+            "Washington, D.C.": [38.9072, -77.0369], 
+            "Frankfurt, Germany": [50.1109, 8.6821], 
+            "Basel, Switzerland": [47.5596, 7.5886], 
+            "Florence, Italy": [43.7793, 11.2558],
+            "Paris, France": [48.8566, 2.3522],
+            "London, UK": [51.5072, -0.1276]
+        };
 
         // --- DATA OPERATIONS ---
         async function loadData() {
@@ -214,7 +222,6 @@
             const method = isNew ? 'POST' : 'PATCH';
             const headers = { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
             try {
-                // Ensure deadline is null if empty, otherwise Supabase might reject it
                 if (courseData.application_deadline === '') {
                     courseData.application_deadline = null;
                 }
