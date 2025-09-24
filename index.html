@@ -368,12 +368,33 @@
         }
 
         function downloadICS(course) {
-            const formatDate = (date) => date ? date.replace(/-/g, '') + 'T000000Z' : '';
-            const startDate = formatDate(course.start_date);
-            const endDate = formatDate(course.end_date || course.start_date);
+            const formatDate = (date) => date.replace(/-/g, '');
+            
+            const startDate = course.start_date;
             if (!startDate) return;
-            const cal = [ 'BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT', `UID:${course.id}@maptraininghub.com`, `DTSTAMP:${new Date().toISOString().replace(/[-:.]/g, '')}`, `DTSTART:${startDate}`, `DTEND:${endDate}`, `SUMMARY:${course.title}`, `DESCRIPTION:For more details, visit: ${course.url}`, `LOCATION:${course.location || ''}`, 'END:VEVENT', 'END:VCALENDAR' ].join('\n');
-            const blob = new Blob([cal], { type: 'text/calendar' });
+
+            // For iCal, DTEND is exclusive. Add one day to the end date.
+            const endDateStr = course.end_date || course.start_date;
+            const endDateObj = new Date(endDateStr.replace(/-/g, '/'));
+            endDateObj.setDate(endDateObj.getDate() + 1);
+            const finalEndDateStr = endDateObj.toISOString().split('T')[0];
+
+            const cal = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'BEGIN:VEVENT',
+                `UID:${course.id}@maptraininghub.com`,
+                `DTSTAMP:${new Date().toISOString().replace(/[-:.]/g, '')}Z`,
+                `DTSTART;VALUE=DATE:${formatDate(startDate)}`,
+                `DTEND;VALUE=DATE:${formatDate(finalEndDateStr)}`,
+                `SUMMARY:${course.title}`,
+                `DESCRIPTION:For more details, visit: ${course.url}`,
+                `LOCATION:${course.location || ''}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([cal], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `${course.title.replace(/[\W_]+/g, "_")}.ics`;
@@ -393,4 +414,5 @@
     </script>
 </body>
 </html>
+
 
