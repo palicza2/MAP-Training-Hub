@@ -80,6 +80,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="start_date">Start Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="application_deadline">Deadline</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable" data-sort="location">Location</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topics</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -150,7 +151,6 @@
         const SUPABASE_URL = 'https://nkhhzkwljovjbacxewqq.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NjAwMjEsImV4cCI6MjA3NDIzNjAyMX0.2HgSxzVMtPoOjlTKyVyuADbi77aufW7msLVPmtALUlc'; 
         const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5raGh6a3dsam92amJhY3hld3FxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODY2MDAyMSwiZXhwIjoyMDc0MjM2MDIxfQ.dRpyruTHe-L3sLiNrbiuSRRc7mYJxJTtEPqtsSoDf-4'; // KEEP THIS SECRET
-
 
         // --- ELEMENT SELECTORS ---
         const loadingSpinner = document.getElementById('loading-spinner');
@@ -270,7 +270,7 @@
                 const row = coursesTableBody.insertRow();
                 row.className = 'hover:bg-gray-50';
                 const topicsHtml = (course.topics || []).map(topic => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
-                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.application_deadline || 'N/A'}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td> <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4"><button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button></td>`;
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.application_deadline || 'N/A'}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.location || ''}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td> <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4"><button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button></td>`;
             });
             document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(e.target.dataset.courseId)));
             updateSortIndicators();
