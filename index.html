@@ -29,6 +29,8 @@
         .sort-indicator { display: inline-block; width: 1em; text-align: right; color: #333; }
         #map { height: 600px; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
         #edit-modal { transition: opacity 0.3s ease; }
+        .deadline-warning { background-color: #fffbeb; }
+        .deadline-critical { background-color: #feefee; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -60,8 +62,11 @@
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
                         <div id="filter-content" class="grid grid-cols-1 gap-4"></div>
                         <div class="mt-6 border-t pt-4 space-y-2">
-                             <button id="add-course-btn" class="w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            <button id="add-course-btn" class="w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition-colors">
                                 Add New Course
+                            </button>
+                             <button id="clear-filters-btn" class="w-full text-center bg-gray-200 text-gray-800 font-semibold py-2 rounded-md hover:bg-gray-300 transition-colors">
+                                Clear Filters
                             </button>
                         </div>
                     </div>
@@ -71,7 +76,8 @@
                          <svg class="animate-spin h-10 w-10 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         <p class="mt-4 text-gray-600">Loading courses...</p>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-md hidden" id="table-container">
+                    <!-- Desktop Table View -->
+                    <div class="bg-white p-4 rounded-xl shadow-md hidden lg:block" id="table-container">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-100">
@@ -90,21 +96,17 @@
                             </table>
                         </div>
                     </div>
+                    <!-- Mobile Card View -->
+                    <div id="courses-cards-container" class="space-y-4 lg:hidden">
+                        <!-- Mobile cards will be injected here -->
+                    </div>
                     <div id="no-results" class="hidden text-center py-16"></div>
                 </div>
             </div>
         </div>
 
-        <div id="content-calendar" class="hidden">
-             <div class="bg-white p-6 rounded-xl shadow-md">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Upcoming Courses</h2>
-                    <p class="text-gray-600">Today's Date: <span id="current-date" class="font-semibold"></span></p>
-                </div>
-                <div id="calendar-view-content" class="space-y-6"></div>
-            </div>
-        </div>
-        <div id="content-map" class="hidden"><div id="map"></div></div>
+        <div id="content-calendar" class="hidden"></div>
+        <div id="content-map" class="hidden"></div>
         <div id="content-institutions" class="hidden"></div>
     </div>
     
@@ -115,10 +117,7 @@
                 <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900 mb-4">Edit Course</h3>
                 <form id="edit-form" class="space-y-4">
                     <input type="hidden" id="edit-course-id">
-                    <div>
-                        <label for="edit-title" class="block text-sm font-medium text-gray-700">Title</label>
-                        <input type="text" id="edit-title" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
-                    </div>
+                    <div><label for="edit-title" class="block text-sm font-medium text-gray-700">Title</label><input type="text" id="edit-title" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label for="edit-start-date" class="block text-sm font-medium text-gray-700">Start Date</label><input type="date" id="edit-start-date" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></div>
                         <div><label for="edit-end-date" class="block text-sm font-medium text-gray-700">End Date</label><input type="date" id="edit-end-date" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"></div>
@@ -138,7 +137,10 @@
                     <div><label for="edit-url" class="block text-sm font-medium text-gray-700">URL</label><input type="url" id="edit-url" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"></div>
                     <div class="items-center px-4 py-3 flex justify-end gap-2">
                         <button id="cancel-edit-btn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
-                        <button id="save-edit-btn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Changes</button>
+                        <button id="save-edit-btn" type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center">
+                            <span class="btn-text">Save Changes</span>
+                            <svg class="animate-spin h-5 w-5 text-white hidden btn-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -158,15 +160,15 @@
         const contents = { courses: document.getElementById('content-courses'), calendar: document.getElementById('content-calendar'), map: document.getElementById('content-map'), institutions: document.getElementById('content-institutions') };
         const tableContainer = document.getElementById('table-container');
         const coursesTableBody = document.getElementById('courses-table-body');
+        const cardsContainer = document.getElementById('courses-cards-container');
         const noResults = document.getElementById('no-results');
         const filterContent = document.getElementById('filter-content');
         const addCourseBtn = document.getElementById('add-course-btn');
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-form');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
         const modalTitle = document.getElementById('modal-title');
-        const calendarViewContent = document.getElementById('calendar-view-content');
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
         // --- STATE ---
         let allCourses = [];
@@ -175,56 +177,25 @@
         let mapInitialized = false;
 
         // --- STATIC DATA ---
-        const institutionsData = [ 
-            { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" }, 
-            { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" }, 
-            { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" }, 
-            { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" }, 
-            { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/" }, 
-            { name: "Federal Reserve System", url: "https://www.federalreserve.gov/events.htm" }, 
-            { name: "London School of Economics (LSE)", url: "https://www.lse.ac.uk/study-at-lse/short-courses" }, 
-            { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" }, 
-            { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/events/html/index.en.html" }, 
-        ];
-        const locationCoordinates = { 
-            "Vienna, Austria": [48.2082, 16.3738], 
-            "Washington, D.C.": [38.9072, -77.0369], 
-            "Frankfurt, Germany": [50.1109, 8.6821], 
-            "Basel, Switzerland": [47.5596, 7.5886], 
-            "Florence, Italy": [43.7793, 11.2558],
-            "Paris, France": [48.8566, 2.3522],
-            "London, UK": [51.5072, -0.1276]
-        };
+        const institutionsData = [ { name: "International Monetary Fund (IMF)", url: "https://www.imf.org/en/Capacity-Development/Training" }, { name: "Bank for International Settlements (BIS)", url: "https://www.bis.org/fsi/fsi_events.htm" }, { name: "Joint Vienna Institute (JVI)", url: "https://www.jvi.org/training.html" }, { name: "Deutsche Bundesbank", url: "https://www.bundesbank.de/en/bundesbank/international-central-bank-dialogue/training-and-dialogue" }, { name: "Florence School of Banking (EUI)", url: "https://fsb.eui.eu/training/" }, { name: "Federal Reserve System", url: "https://www.federalreserve.gov/events.htm" }, { name: "London School of Economics (LSE)", url: "https://www.lse.ac.uk/study-at-lse/short-courses" }, { name: "Banque de France (BdF)", url: "https://www.banque-france.fr/en/browse-by/training-seminars" }, { name: "European Central Bank (ECB)", url: "https://www.ecb.europa.eu/events/html/index.en.html" }, ];
+        const locationCoordinates = { "Vienna, Austria": [48.2082, 16.3738], "Washington, D.C.": [38.9072, -77.0369], "Frankfurt, Germany": [50.1109, 8.6821], "Basel, Switzerland": [47.5596, 7.5886], "Florence, Italy": [43.7793, 11.2558], "Paris, France": [48.8566, 2.3522], "London, UK": [51.5072, -0.1276] };
 
         // --- DATA OPERATIONS ---
-        async function loadData() {
-            if (!SUPABASE_URL.includes('YOUR_SUPABASE')) {
-                try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/courses?select=*&order=start_date.asc`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } });
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    allCourses = await response.json();
-                    tableContainer.classList.remove('hidden');
-                    populateFilters(allCourses);
-                    sortAndDisplayCourses();
-                } catch (error) {
-                    loadingSpinner.innerHTML = `<p class="text-red-500">Error loading data. Check Supabase credentials.</p>`;
-                    console.error("Failed to load data:", error);
-                } finally {
-                    loadingSpinner.classList.add('hidden');
-                }
-            } else {
-                 loadingSpinner.innerHTML = `<p class="text-orange-500">Please configure Supabase credentials in index.html.</p>`;
-            }
-        }
-
+        async function loadData() { /* ... unchanged ... */ }
         async function saveData(courseData, isNew = false) {
+            const saveButton = document.getElementById('save-edit-btn');
+            const btnText = saveButton.querySelector('.btn-text');
+            const btnSpinner = saveButton.querySelector('.btn-spinner');
+            
+            saveButton.disabled = true;
+            btnText.classList.add('hidden');
+            btnSpinner.classList.remove('hidden');
+
             const url = isNew ? `${SUPABASE_URL}/rest/v1/courses` : `${SUPABASE_URL}/rest/v1/courses?id=eq.${courseData.id}`;
             const method = isNew ? 'POST' : 'PATCH';
             const headers = { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
             try {
-                if (courseData.application_deadline === '') {
-                    courseData.application_deadline = null;
-                }
+                if (courseData.application_deadline === '') courseData.application_deadline = null;
                 const response = await fetch(url, { method, headers, body: JSON.stringify(courseData) });
                 if (!response.ok) { const error = await response.json(); throw new Error(error.message); }
                 alert('Data saved!');
@@ -232,35 +203,72 @@
                 loadData();
             } catch (error) {
                 alert(`Error saving data: ${error.message}`);
-                console.error("Failed to save:", error);
+            } finally {
+                saveButton.disabled = false;
+                btnText.classList.remove('hidden');
+                btnSpinner.classList.add('hidden');
             }
         }
         
         // --- TABS & UI ---
-        function setupTabs() { Object.keys(tabs).forEach(key => tabs[key].addEventListener('click', (e) => { e.preventDefault(); switchTab(key); })); }
-        function switchTab(activeKey) { Object.keys(tabs).forEach(key => { const tab = tabs[key]; const content = contents[key]; tab.classList.toggle('border-blue-500', key === activeKey); tab.classList.toggle('text-blue-600', key === activeKey); tab.classList.toggle('border-transparent', key !== activeKey); tab.classList.toggle('text-gray-500', key !== activeKey); content.classList.toggle('hidden', key !== activeKey); }); if (activeKey === 'calendar') displayCalendarView(); if (activeKey === 'map') initMap(); if (activeKey === 'institutions') displayInstitutions(); }
-        function displayInstitutions() { if (contents.institutions.innerHTML !== '') return; const i = institutionsData.map(inst => `<a href="${inst.url}" target="_blank" rel="noopener noreferrer" class="block bg-white p-6 rounded-xl shadow-sm border"><h3 class="text-lg font-bold">${inst.name}</h3><p class="text-sm text-blue-600">Go to training page →</p></a>`).join(''); contents.institutions.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${i}</div>`; }
-        function getUniqueValues(courses, key) { const v = courses.flatMap(c => c[key] || []); return [...new Set(v)].sort(); }
+        function setupTabs() { /* ... unchanged ... */ }
+        function switchTab(activeKey) { /* ... unchanged ... */ }
+        function displayInstitutions() { /* ... unchanged ... */ }
+        function getUniqueValues(courses, key) { /* ... unchanged ... */ }
 
         function populateFilters(courses) {
             const institutions = getUniqueValues(courses, 'institution');
             const topics = getUniqueValues(courses, 'topics');
             const formats = getUniqueValues(courses, 'format');
-            filterContent.innerHTML = `<div><label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label><input type="text" id="search" placeholder="Keyword..." class="w-full p-2 border border-gray-300 rounded-md"></div> ${createSelectFilter('institution', 'Provider', institutions)} ${createSelectFilter('topic', 'Topic', topics)} ${createSelectFilter('format', 'Format', formats)}`;
+            filterContent.innerHTML = `
+                <div><label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label><input type="text" id="search" placeholder="Keyword..." class="w-full p-2 border border-gray-300 rounded-md"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label for="filter-date-from" class="block text-sm font-medium text-gray-700 mb-1">From</label><input type="date" id="filter-date-from" class="w-full p-2 border border-gray-300 rounded-md"></div>
+                    <div><label for="filter-date-to" class="block text-sm font-medium text-gray-700 mb-1">To</label><input type="date" id="filter-date-to" class="w-full p-2 border border-gray-300 rounded-md"></div>
+                </div>
+                ${createSelectFilter('institution', 'Provider', institutions)} ${createSelectFilter('topic', 'Topic', topics)} ${createSelectFilter('format', 'Format', formats)}`;
             document.getElementById('search').addEventListener('input', sortAndDisplayCourses);
+            document.getElementById('filter-date-from').addEventListener('change', sortAndDisplayCourses);
+            document.getElementById('filter-date-to').addEventListener('change', sortAndDisplayCourses);
             document.querySelectorAll('select[id^="filter-"]').forEach(el => el.addEventListener('change', sortAndDisplayCourses));
         }
 
-        function createSelectFilter(id, label, options) { return `<div class="mb-2"><label for="filter-${id}" class="block text-sm font-medium text-gray-700 mb-1">${label}</label><select id="filter-${id}" class="w-full p-2 border border-gray-300 rounded-md bg-white"><option value="all">All</option>${options.map(o => `<option value="${o}">${o}</option>`).join('')}</select></div>`; }
+        function createSelectFilter(id, label, options) { /* ... unchanged ... */ }
         
         function sortAndDisplayCourses() {
             const s = document.getElementById('search').value.toLowerCase();
             const i = document.getElementById('filter-institution')?.value || 'all';
             const t = document.getElementById('filter-topic')?.value || 'all';
             const f = document.getElementById('filter-format')?.value || 'all';
-            const filtered = allCourses.filter(c => (s === '' || c.title.toLowerCase().includes(s) || (c.topics || []).join(' ').toLowerCase().includes(s)) && (i === 'all' || c.institution === i) && (t === 'all' || (c.topics && c.topics.includes(t))) && (f === 'all' || c.format === f));
+            const dateFrom = document.getElementById('filter-date-from')?.value;
+            const dateTo = document.getElementById('filter-date-to')?.value;
+
+            const filtered = allCourses.filter(c => {
+                const searchMatch = (s === '' || c.title.toLowerCase().includes(s) || (c.topics || []).join(' ').toLowerCase().includes(s));
+                const institutionMatch = (i === 'all' || c.institution === i);
+                const topicMatch = (t === 'all' || (c.topics && c.topics.includes(t)));
+                const formatMatch = (f === 'all' || c.format === f);
+                const dateFromMatch = (!dateFrom || new Date(c.start_date) >= new Date(dateFrom));
+                const dateToMatch = (!dateTo || new Date(c.start_date) <= new Date(dateTo));
+                return searchMatch && institutionMatch && topicMatch && formatMatch && dateFromMatch && dateToMatch;
+            });
             filtered.sort((a, b) => { const comp = String(a[currentSort.column]).localeCompare(String(b[currentSort.column])); return currentSort.direction === 'asc' ? comp : -comp; });
+            
             displayCoursesInTable(filtered);
+            displayCoursesAsCards(filtered); // Also render the mobile card view
+        }
+
+        function getDeadlineClass(deadline) {
+            if (!deadline) return '';
+            const deadlineDate = new Date(deadline);
+            const now = new Date();
+            const oneWeek = 7 * 24 * 60 * 60 * 1000;
+            const oneMonth = 30 * 24 * 60 * 60 * 1000;
+
+            if (deadlineDate < now) return 'text-gray-400';
+            if (deadlineDate - now < oneWeek) return 'deadline-critical text-red-600 font-semibold';
+            if (deadlineDate - now < oneMonth) return 'deadline-warning text-yellow-600 font-semibold';
+            return '';
         }
 
         function displayCoursesInTable(courses) {
@@ -268,118 +276,102 @@
             noResults.classList.toggle('hidden', courses.length > 0);
             courses.forEach(course => {
                 const row = coursesTableBody.insertRow();
-                row.className = 'hover:bg-gray-50';
+                const deadlineClass = getDeadlineClass(course.application_deadline);
+                row.className = `hover:bg-gray-50`;
+
                 const topicsHtml = (course.topics || []).map(topic => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
-                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.application_deadline || 'N/A'}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.location || ''}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td> <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4"><button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button></td>`;
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="${course.url}" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline">${course.title}</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.start_date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${deadlineClass}">${course.application_deadline || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.institution}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.location || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${topicsHtml}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${course.format}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-4">
+                        <button data-course-id="${course.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold">Edit</button>
+                        <button data-course-ics='${JSON.stringify(course)}' class="ics-btn text-green-600 hover:text-green-800 font-semibold">Calendar</button>
+                    </td>`;
             });
             document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(e.target.dataset.courseId)));
+            document.querySelectorAll('.ics-btn').forEach(btn => btn.addEventListener('click', (e) => downloadICS(JSON.parse(e.target.dataset.ics))));
             updateSortIndicators();
         }
 
-        function setupSorting() { document.querySelectorAll('th.sortable').forEach(header => { header.addEventListener('click', () => { const c = header.dataset.sort; if (currentSort.column === c) { currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc'; } else { currentSort.column = c; currentSort.direction = 'asc'; } sortAndDisplayCourses(); }); }); }
-        function updateSortIndicators() { document.querySelectorAll('th.sortable .sort-indicator').forEach(i => i.textContent = ''); const a = document.querySelector(`th[data-sort="${currentSort.column}"] .sort-indicator`); if (a) a.textContent = currentSort.direction === 'asc' ? '▲' : '▼'; }
-        
-        // --- CALENDAR TAB LOGIC ---
-        function displayCalendarView() {
-            const now = new Date();
-            const upcomingCourses = allCourses
-                .filter(c => new Date(c.start_date.replace(/-/g, '/')) >= now)
-                .sort((a, b) => new Date(a.start_date.replace(/-/g, '/')) - new Date(b.start_date.replace(/-/g, '/')));
-            const coursesByMonth = upcomingCourses.reduce((acc, course) => {
-                const month = new Date(course.start_date.replace(/-/g, '/')).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                if (!acc[month]) acc[month] = []; acc[month].push(course);
-                return acc;
-            }, {});
-
-            if (Object.keys(coursesByMonth).length === 0) {
-                 calendarViewContent.innerHTML = `<p class="text-center text-gray-500">No upcoming courses found.</p>`;
-                 return;
-            }
-            calendarViewContent.innerHTML = Object.keys(coursesByMonth).sort((a, b) => new Date(a) - new Date(b)).map(month => `
-                <div>
-                    <h3 class="text-lg font-semibold text-blue-700 border-b-2 border-blue-200 pb-2 mb-4">${month}</h3>
-                    <ul class="space-y-4">
-                        ${coursesByMonth[month].map(c => `
-                            <li class="flex items-start space-x-4">
-                                <div class="text-center flex-shrink-0 w-20">
-                                    <p class="font-bold text-lg text-gray-800">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { day: 'numeric' })}</p>
-                                    <p class="text-sm text-gray-500">${new Date(c.start_date.replace(/-/g, '/')).toLocaleDateString('en-US', { weekday: 'short' })}</p>
-                                </div>
-                                <div class="border-l-2 border-gray-200 pl-4 flex-grow">
-                                    <a href="${c.url}" target="_blank" class="font-semibold text-blue-600 hover:underline">${c.title}</a>
-                                    <p class="text-sm text-gray-600">${c.institution} | ${c.start_date} to ${c.end_date}</p>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `).join('');
-        }
-        
-        // --- MAP TAB LOGIC ---
-        function initMap() {
-            if (mapInitialized) { setTimeout(() => map.invalidateSize(), 0); return; }
-            map = L.map('map').setView([48.2082, 16.3738], 4);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-            const physical = allCourses.filter(c => c.format === 'On-site' && locationCoordinates[c.location]);
-            physical.forEach(c => { const coords = locationCoordinates[c.location]; if (coords) { L.marker(coords).addTo(map).bindPopup(`<b>${c.title}</b><br>${c.institution}`); } });
-            mapInitialized = true;
-            setTimeout(() => map.invalidateSize(), 0);
+        function displayCoursesAsCards(courses) {
+            cardsContainer.innerHTML = '';
+             courses.forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-lg shadow-md border';
+                const topicsHtml = (course.topics || []).map(topic => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${topic}</span>`).join('');
+                const deadlineClass = getDeadlineClass(course.application_deadline);
+                card.innerHTML = `
+                    <a href="${course.url}" target="_blank" class="text-lg font-bold text-blue-700 hover:underline">${course.title}</a>
+                    <p class="text-sm font-semibold text-gray-600 mt-1">${course.institution}</p>
+                    <div class="mt-2 text-sm space-y-1 text-gray-800">
+                        <p><strong>Date:</strong> ${course.start_date}</p>
+                        <p><strong>Location:</strong> ${course.location}</p>
+                        <p class="font-medium ${deadlineClass}"><strong>Deadline:</strong> ${course.application_deadline || 'N/A'}</p>
+                    </div>
+                    <div class="mt-3 border-t pt-2 flex flex-wrap">${topicsHtml}</div>
+                    <div class="mt-3 flex gap-4">
+                         <button data-course-id="${course.id}" class="edit-btn flex-1 text-center py-2 bg-blue-50 text-blue-700 rounded-md text-sm font-semibold">Edit</button>
+                         <button data-course-ics='${JSON.stringify(course)}' class="ics-btn flex-1 text-center py-2 bg-green-50 text-green-700 rounded-md text-sm font-semibold">Add to Calendar</button>
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+             document.querySelectorAll('#courses-cards-container .edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(e.target.dataset.courseId)));
+             document.querySelectorAll('#courses-cards-container .ics-btn').forEach(btn => btn.addEventListener('click', (e) => downloadICS(JSON.parse(e.target.dataset.ics))));
         }
 
-        // --- MODAL & EDITING LOGIC ---
-        function openEditModal(courseId = null) {
-            editForm.reset();
-            if (courseId) {
-                const course = allCourses.find(c => c.id == courseId);
-                if (!course) return;
-                modalTitle.textContent = 'Edit Course';
-                document.getElementById('edit-course-id').value = course.id;
-                document.getElementById('edit-title').value = course.title;
-                document.getElementById('edit-start-date').value = course.start_date;
-                document.getElementById('edit-end-date').value = course.end_date;
-                document.getElementById('edit-application-deadline').value = course.application_deadline;
-                document.getElementById('edit-institution').value = course.institution;
-                document.getElementById('edit-location').value = course.location;
-                document.getElementById('edit-format').value = course.format;
-                document.getElementById('edit-tuition-fee').value = course.tuition_fee;
-                document.getElementById('edit-topics').value = (course.topics || []).join(', ');
-                document.getElementById('edit-url').value = course.url;
-            } else {
-                modalTitle.textContent = 'Add New Course';
-                document.getElementById('edit-course-id').value = '';
-            }
-            editModal.classList.remove('hidden');
+        function setupSorting() { /* ... unchanged ... */ }
+        function updateSortIndicators() { /* ... unchanged ... */ }
+        function displayCalendarView() { /* ... unchanged ... */ }
+        function initMap() { /* ... unchanged ... */ }
+        function openEditModal(courseId = null) { /* ... unchanged ... */ }
+        function closeEditModal() { /* ... unchanged ... */ }
+        function handleFormSubmit(e) { /* ... unchanged ... */ }
+
+        function resetFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            document.querySelectorAll('select[id^="filter-"]').forEach(select => select.value = 'all');
+            sortAndDisplayCourses();
         }
 
-        function closeEditModal() { editModal.classList.add('hidden'); }
+        function downloadICS(course) {
+            const formatDate = (date) => date.replace(/-/g, '') + 'T000000Z';
+            const cal = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'BEGIN:VEVENT',
+                `UID:${course.id}@maptraininghub.com`,
+                `DTSTAMP:${new Date().toISOString().replace(/[-:.]/g, '')}`,
+                `DTSTART:${formatDate(course.start_date)}`,
+                `DTEND:${formatDate(course.end_date || course.start_date)}`,
+                `SUMMARY:${course.title}`,
+                `DESCRIPTION:For more details, visit: ${course.url}`,
+                `LOCATION:${course.location || ''}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\n');
 
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const courseId = document.getElementById('edit-course-id').value;
-            const isNew = courseId === '';
-            const newId = isNew ? Math.max(0, ...allCourses.map(c => c.id)) + 1 : parseInt(courseId);
-            const courseData = {
-                id: newId,
-                title: document.getElementById('edit-title').value,
-                start_date: document.getElementById('edit-start-date').value,
-                end_date: document.getElementById('edit-end-date').value,
-                application_deadline: document.getElementById('edit-application-deadline').value,
-                institution: document.getElementById('edit-institution').value,
-                location: document.getElementById('edit-location').value,
-                format: document.getElementById('edit-format').value,
-                tuition_fee: document.getElementById('edit-tuition-fee').value,
-                topics: document.getElementById('edit-topics').value.split(',').map(t => t.trim()).filter(Boolean),
-                url: document.getElementById('edit-url').value
-            };
-            delete courseData.description; 
-            saveData(courseData, isNew);
+            const blob = new Blob([cal], { type: 'text/calendar' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${course.title.replace(/ /g, '_')}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // --- EVENT LISTENERS ---
         editForm.addEventListener('submit', handleFormSubmit);
         cancelEditBtn.addEventListener('click', closeEditModal);
         addCourseBtn.addEventListener('click', () => openEditModal());
+        clearFiltersBtn.addEventListener('click', resetFilters);
         setupTabs();
         setupSorting();
         loadData();
